@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Database H2 ###
+carRentalDb.mv.db
+carRentalDb.trace.db
