@@ -32,6 +32,10 @@ build/
 ### VS Code ###
 .vscode/
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 ### Database H2 ###
 carRentalDb.mv.db
 carRentalDb.trace.db

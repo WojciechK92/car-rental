@@ -1,6 +1,9 @@
 package com.github.wojciechk92.carrental.client;
 
+import com.github.wojciechk92.carrental.rental.Rental;
 import jakarta.persistence.*;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "clients")
@@ -12,6 +15,8 @@ public class Client {
   private String lastName;
   private String email;
   private int tel;
+  @OneToMany(mappedBy = "client")
+  private Set<Rental> rentals;
 
   public Client() {
   }

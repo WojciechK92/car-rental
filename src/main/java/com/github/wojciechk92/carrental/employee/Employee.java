@@ -1,6 +1,9 @@
 package com.github.wojciechk92.carrental.employee;
 
+import com.github.wojciechk92.carrental.rental.Rental;
 import jakarta.persistence.*;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "employees")
@@ -12,6 +15,8 @@ public class Employee {
   private String lastName;
   private String email;
   private int tel;
+  @OneToMany(mappedBy = "employee")
+  private Set<Rental> rentals;
 
   public Employee() {
   }

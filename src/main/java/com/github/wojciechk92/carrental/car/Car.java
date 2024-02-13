@@ -1,6 +1,9 @@
 package com.github.wojciechk92.carrental.car;
 
+import com.github.wojciechk92.carrental.rental.Rental;
 import jakarta.persistence.*;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "cars")
@@ -13,6 +16,8 @@ public class Car {
   private int productionYear;
   @Enumerated(EnumType.STRING)
   private CarStatus status;
+  @ManyToMany(mappedBy = "cars")
+  private Set<Rental> rentals;
 
   public Car() {}
 
