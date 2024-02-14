@@ -27,6 +27,15 @@ class CarServiceImpl implements CarService {
   }
 
   @Override
+  public List<CarReadModel> getCarsByIdList(List<Long> list) {
+    List<CarReadModel> result = carRepository.findAllByIdIsIn(list).stream()
+            .map(CarReadModel::new)
+            .toList();
+    System.out.println(result);
+    return result;
+  }
+
+  @Override
   public CarReadModel getCar(Long id) {
     return carRepository.findById(id)
             .map(CarReadModel::new)

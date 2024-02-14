@@ -1,5 +1,6 @@
 package com.github.wojciechk92.carrental.employee;
 
+import com.github.wojciechk92.carrental.employee.dto.EmployeeReadModel;
 import com.github.wojciechk92.carrental.rental.Rental;
 import jakarta.persistence.*;
 
@@ -26,6 +27,14 @@ public class Employee {
     this.lastName = lastName;
     this.email = email;
     this.tel = tel;
+  }
+
+  public Employee(EmployeeReadModel employee) {
+    this.id = employee.getId();
+    this.firstName = employee.getFirstName();
+    this.lastName = employee.getLastName();
+    this.email = employee.getEmail();
+    this.tel = employee.getTel();
   }
 
   public Long getId() {
@@ -66,5 +75,13 @@ public class Employee {
 
   void setTel(int tel) {
     this.tel = tel;
+  }
+
+  public Set<Rental> getRentals() {
+    return rentals;
+  }
+
+  void setRentals(Set<Rental> rentals) {
+    this.rentals = rentals;
   }
 }

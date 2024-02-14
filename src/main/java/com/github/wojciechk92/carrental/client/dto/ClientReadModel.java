@@ -1,6 +1,9 @@
 package com.github.wojciechk92.carrental.client.dto;
 
 import com.github.wojciechk92.carrental.client.Client;
+import com.github.wojciechk92.carrental.rental.Rental;
+
+import java.util.List;
 
 public class ClientReadModel {
   private Long id;
@@ -8,6 +11,7 @@ public class ClientReadModel {
   private String lastName;
   private String email;
   private int tel;
+  private List<Long> rentalIdList;
 
   public ClientReadModel(Client client) {
     this.id = client.getId();
@@ -15,6 +19,9 @@ public class ClientReadModel {
     this.lastName = client.getLastName();
     this.email = client.getEmail();
     this.tel = client.getTel();
+    this.rentalIdList = client.getRentals().stream()
+            .map(Rental::getId)
+            .toList();
   }
 
   public Long getId() {
@@ -55,5 +62,13 @@ public class ClientReadModel {
 
   public void setTel(int tel) {
     this.tel = tel;
+  }
+
+  public List<Long> getRentalIdList() {
+    return rentalIdList;
+  }
+
+  public void setRentalIdList(List<Long> rentalIdList) {
+    this.rentalIdList = rentalIdList;
   }
 }

@@ -10,7 +10,10 @@ public interface CarService {
 
   List<CarReadModel> getCars(Pageable pageable);
 
+  List<CarReadModel> getCarsByIdList(List<Long> list);
+
   CarReadModel getCar(Long id);
 
   CarReadModel createCar(CarWriteModel car);
+
 }

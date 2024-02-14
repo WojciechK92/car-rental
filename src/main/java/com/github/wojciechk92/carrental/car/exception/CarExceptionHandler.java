@@ -1,13 +1,12 @@
 package com.github.wojciechk92.carrental.car.exception;
 
-import com.github.wojciechk92.carrental.car.CarController;
 import com.github.wojciechk92.carrental.dto.ExceptionMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(assignableTypes = CarController.class)
+@RestControllerAdvice
 public class CarExceptionHandler {
 
   @ExceptionHandler(CarException.class)

@@ -1,13 +1,12 @@
 package com.github.wojciechk92.carrental.client.exception;
 
-import com.github.wojciechk92.carrental.client.ClientController;
 import com.github.wojciechk92.carrental.dto.ExceptionMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(assignableTypes = ClientController.class)
+@RestControllerAdvice
 public class ClientExceptionHandler {
 
   @ExceptionHandler(ClientException.class)

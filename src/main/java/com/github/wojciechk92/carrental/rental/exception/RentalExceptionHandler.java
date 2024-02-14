@@ -1,13 +1,12 @@
 package com.github.wojciechk92.carrental.rental.exception;
 
 import com.github.wojciechk92.carrental.dto.ExceptionMessage;
-import com.github.wojciechk92.carrental.rental.RentalController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(assignableTypes = RentalController.class)
+@RestControllerAdvice
 public class RentalExceptionHandler {
 
   @ExceptionHandler(RentalException.class)

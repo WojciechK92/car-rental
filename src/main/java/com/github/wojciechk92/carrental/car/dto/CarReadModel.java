@@ -2,6 +2,9 @@ package com.github.wojciechk92.carrental.car.dto;
 
 import com.github.wojciechk92.carrental.car.Car;
 import com.github.wojciechk92.carrental.car.CarStatus;
+import com.github.wojciechk92.carrental.rental.Rental;
+
+import java.util.List;
 
 public class CarReadModel {
   private Long id;
@@ -9,6 +12,7 @@ public class CarReadModel {
   private String model;
   private int productionYear;
   private CarStatus status;
+  private List<Long> rentalIdList;
 
   public CarReadModel(Car car) {
     this.id = car.getId();
@@ -16,6 +20,9 @@ public class CarReadModel {
     this.model = car.getModel();
     this.productionYear = car.getProductionYear();
     this.status = car.getStatus();
+    this.rentalIdList = car.getRentals().stream()
+            .map(Rental::getId)
+            .toList();
   }
 
   public Long getId() {
@@ -56,5 +63,13 @@ public class CarReadModel {
 
   public void setStatus(CarStatus status) {
     this.status = status;
+  }
+
+  public List<Long> getRentalIdList() {
+    return rentalIdList;
+  }
+
+  public void setRentalIdList(List<Long> rentalIdList) {
+    this.rentalIdList = rentalIdList;
   }
 }

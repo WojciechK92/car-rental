@@ -1,8 +1,10 @@
 package com.github.wojciechk92.carrental.client;
 
+import com.github.wojciechk92.carrental.client.dto.ClientReadModel;
 import com.github.wojciechk92.carrental.rental.Rental;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -16,7 +18,7 @@ public class Client {
   private String email;
   private int tel;
   @OneToMany(mappedBy = "client")
-  private Set<Rental> rentals;
+  private Set<Rental> rentals = new HashSet<>();
 
   public Client() {
   }
@@ -26,6 +28,14 @@ public class Client {
     this.lastName = lastName;
     this.email = email;
     this.tel = tel;
+  }
+
+  public Client(ClientReadModel client) {
+    this.id = client.getId();
+    this.firstName = client.getFirstName();
+    this.lastName = client.getLastName();
+    this.email = client.getEmail();
+    this.tel = client.getTel();
   }
 
   public Long getId() {
@@ -66,5 +76,13 @@ public class Client {
 
   void setTel(int tel) {
     this.tel = tel;
+  }
+
+  public Set<Rental> getRentals() {
+    return rentals;
+  }
+
+  void setRentals(Set<Rental> rentals) {
+    this.rentals = rentals;
   }
 }
