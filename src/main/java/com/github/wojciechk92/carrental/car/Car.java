@@ -16,6 +16,7 @@ public class Car {
   private String make;
   private String model;
   private int productionYear;
+  private double pricePerDay;
   @Enumerated(EnumType.STRING)
   private CarStatus status;
   @ManyToMany(mappedBy = "cars")
@@ -23,18 +24,21 @@ public class Car {
 
   public Car() {}
 
-  public Car(String make, String model, int productionYear, CarStatus status) {
+  public Car(String make, String model, int productionYear, double pricePerDay, CarStatus status) {
     this.make = make;
     this.model = model;
     this.productionYear = productionYear;
+    this.pricePerDay = pricePerDay;
     this.status = status;
   }
 
   public Car(CarReadModel car) {
+    this.id = car.getId();
     this.make = car.getMake();
     this.model = car.getModel();
     this.productionYear = car.getProductionYear();
     this.status = car.getStatus();
+    this.pricePerDay = car.getPricePerDay();
   }
 
   public Long getId() {
@@ -75,6 +79,14 @@ public class Car {
 
   void setStatus(CarStatus status) {
     this.status = status;
+  }
+
+  public double getPricePerDay() {
+    return pricePerDay;
+  }
+
+  void setPricePerDay(double pricePerDay) {
+    this.pricePerDay = pricePerDay;
   }
 
   public Set<Rental> getRentals() {

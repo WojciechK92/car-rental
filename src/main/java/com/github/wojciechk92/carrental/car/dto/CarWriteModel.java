@@ -8,6 +8,7 @@ public class CarWriteModel {
   private String model;
   private int productionYear;
   private CarStatus status;
+  private double pricePerDay;
 
   public String getMake() {
     return make;
@@ -41,7 +42,15 @@ public class CarWriteModel {
     this.status = status;
   }
 
+  public double getPricePerDay() {
+    return pricePerDay;
+  }
+
+  public void setPricePerDay(double pricePerDay) {
+    this.pricePerDay = pricePerDay;
+  }
+
   public Car toCar() {
-    return new Car(make, model, productionYear, status);
+    return new Car(make, model, productionYear, pricePerDay, status);
   }
 }

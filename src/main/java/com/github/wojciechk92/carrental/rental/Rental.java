@@ -16,13 +16,14 @@ public class Rental {
   private Long id;
   private LocalDateTime rentalDate;
   private LocalDateTime returnDate;
+  private int rentalFor;
   @ManyToOne
   @JoinColumn(name = "client_id")
   private Client client;
   @ManyToOne
   @JoinColumn(name="employee_id")
   private Employee employee;
-  @ManyToMany(cascade = CascadeType.ALL)
+  @ManyToMany
   @JoinTable(name = "rental_car",
           joinColumns = @JoinColumn(name = "rental_id", referencedColumnName = "id"),
           inverseJoinColumns = @JoinColumn(name = "car_id", referencedColumnName = "id"))
@@ -30,9 +31,10 @@ public class Rental {
 
   public Rental() {}
 
-  public Rental(LocalDateTime rentalDate, LocalDateTime returnDate, Client client, Employee employee, Set<Car> cars) {
+  public Rental(LocalDateTime rentalDate, LocalDateTime returnDate, int rentalFor, Client client, Employee employee, Set<Car> cars) {
     this.rentalDate = rentalDate;
     this.returnDate = returnDate;
+    this.rentalFor = rentalFor;
     this.client = client;
     this.employee = employee;
     this.cars = cars;
@@ -60,6 +62,14 @@ public class Rental {
 
   void setReturnDate(LocalDateTime returnDate) {
     this.returnDate = returnDate;
+  }
+
+  public int getRentalFor() {
+    return rentalFor;
+  }
+
+  void setRentalFor(int rentalFor) {
+    this.rentalFor = rentalFor;
   }
 
   public Client getClient() {

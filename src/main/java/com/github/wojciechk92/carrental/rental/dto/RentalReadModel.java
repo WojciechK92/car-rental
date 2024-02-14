@@ -13,6 +13,7 @@ public class RentalReadModel {
   private Long id;
   private LocalDateTime rentalDate;
   private LocalDateTime returnDate;
+  private int rentalFor;
   private Long clientId;
   private Long employeeId;
   private List<Long> carsIdList;
@@ -21,6 +22,7 @@ public class RentalReadModel {
     this.id = rental.getId();
     this.rentalDate = rental.getRentalDate();
     this.returnDate = rental.getReturnDate();
+    this.rentalFor = rental.getRentalFor();
     this.clientId = rental.getClient().getId();
     this.employeeId = rental.getEmployee().getId();
     this.carsIdList = rental.getCars().stream()
@@ -50,6 +52,14 @@ public class RentalReadModel {
 
   public void setReturnDate(LocalDateTime returnDate) {
     this.returnDate = returnDate;
+  }
+
+  public int getRentalFor() {
+    return rentalFor;
+  }
+
+  public void setRentalFor(int rentalFor) {
+    this.rentalFor = rentalFor;
   }
 
   public Long getClientId() {

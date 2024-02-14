@@ -4,6 +4,7 @@ import com.github.wojciechk92.carrental.employee.dto.EmployeeReadModel;
 import com.github.wojciechk92.carrental.rental.Rental;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -17,7 +18,7 @@ public class Employee {
   private String email;
   private int tel;
   @OneToMany(mappedBy = "employee")
-  private Set<Rental> rentals;
+  private Set<Rental> rentals = new HashSet<>();
 
   public Employee() {
   }

@@ -12,6 +12,7 @@ public class CarReadModel {
   private String model;
   private int productionYear;
   private CarStatus status;
+  private double pricePerDay;
   private List<Long> rentalIdList;
 
   public CarReadModel(Car car) {
@@ -20,6 +21,7 @@ public class CarReadModel {
     this.model = car.getModel();
     this.productionYear = car.getProductionYear();
     this.status = car.getStatus();
+    this.pricePerDay = car.getPricePerDay();
     this.rentalIdList = car.getRentals().stream()
             .map(Rental::getId)
             .toList();
@@ -63,6 +65,14 @@ public class CarReadModel {
 
   public void setStatus(CarStatus status) {
     this.status = status;
+  }
+
+  public double getPricePerDay() {
+    return pricePerDay;
+  }
+
+  public void setPricePerDay(double pricePerDay) {
+    this.pricePerDay = pricePerDay;
   }
 
   public List<Long> getRentalIdList() {

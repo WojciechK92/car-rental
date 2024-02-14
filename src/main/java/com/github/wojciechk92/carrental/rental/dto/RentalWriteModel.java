@@ -11,6 +11,7 @@ import java.util.Set;
 public class RentalWriteModel {
   private LocalDateTime rentalDate;
   private LocalDateTime returnDate;
+  private int rentalFor;
   private Long clientId;
   private Long employeeId;
   private List<Long> carsIdList;
@@ -27,6 +28,14 @@ public class RentalWriteModel {
 
   public LocalDateTime getReturnDate() {
     return returnDate;
+  }
+
+  public int getRentalFor() {
+    return rentalFor;
+  }
+
+  public void setRentalFor(int rentalFor) {
+    this.rentalFor = rentalFor;
   }
 
   public void setReturnDate(LocalDateTime returnDate) {
@@ -58,6 +67,6 @@ public class RentalWriteModel {
   }
 
   public Rental toRental(Client client, Employee employee, Set<Car> cars) {
-    return new Rental(rentalDate, returnDate, client, employee, cars);
+    return new Rental(rentalDate, returnDate, rentalFor, client, employee, cars);
   }
 }
