@@ -18,6 +18,7 @@ public class Car {
   private int productionYear;
   private double pricePerDay;
   @Enumerated(EnumType.STRING)
+  @Column(name = "status", columnDefinition = "VARCHAR(30)")
   private CarStatus status;
   @ManyToMany(mappedBy = "cars")
   private Set<Rental> rentals = new HashSet<>();
