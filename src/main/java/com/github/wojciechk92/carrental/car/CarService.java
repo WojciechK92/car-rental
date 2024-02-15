@@ -16,4 +16,8 @@ public interface CarService {
 
   CarReadModel createCar(CarWriteModel car);
 
+  void updateCar(CarWriteModel car, Long id);
+
+  void setStatusTo(CarStatus status, Long id);
+
 }

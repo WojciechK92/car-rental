@@ -36,4 +36,16 @@ public class CarController {
     CarReadModel result = carService.createCar(car);
     return ResponseEntity.created(URI.create("/cars/" + result.getId())).body(result);
   }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<Void> updateCar(@RequestBody @Valid CarWriteModel car, @PathVariable Long id) {
+    carService.updateCar(car, id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/{id}")
+  public ResponseEntity<Void> setStatusTo(@RequestParam CarStatus status, @PathVariable Long id) {
+    carService.setStatusTo(status, id);
+    return ResponseEntity.noContent().build();
+  }
 }

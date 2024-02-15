@@ -2,9 +2,6 @@ package com.github.wojciechk92.carrental.client.dto;
 
 import com.github.wojciechk92.carrental.client.Client;
 import com.github.wojciechk92.carrental.client.ClientStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 

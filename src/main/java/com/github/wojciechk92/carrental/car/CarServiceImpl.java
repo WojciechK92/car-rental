@@ -4,6 +4,7 @@ import com.github.wojciechk92.carrental.car.dto.CarReadModel;
 import com.github.wojciechk92.carrental.car.dto.CarWriteModel;
 import com.github.wojciechk92.carrental.car.exception.CarException;
 import com.github.wojciechk92.carrental.car.exception.CarExceptionMessage;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -46,5 +47,33 @@ class CarServiceImpl implements CarService {
   public CarReadModel createCar(CarWriteModel toSave) {
     Car result = carRepository.save(toSave.toCar());
     return new CarReadModel(result);
+  }
+
+
+  @Transactional
+  @Override
+  public void updateCar(CarWriteModel toUpdate, Long id) {
+
+    carRepository.findById(id)
+            .map(car -> {
+              car.setMake(toUpdate.getMake());
+              car.setModel(toUpdate.getModel());
+              car.setProductionYear(toUpdate.getProductionYear());
+              car.setPricePerDay(toUpdate.getPricePerDay());
+              car.setStatus(toUpdate.getStatus());
+              return car;
+            })
+            .orElseThrow(() -> new CarException(CarExceptionMessage.CAR_NOT_FOUND));
+  }
+
+  @Transactional
+  @Override
+  public void setStatusTo(CarStatus status, Long id) {
+    carRepository.findById(id)
+            .map(car -> {
+              car.setStatus(status);
+              return car;
+            })
+            .orElseThrow(() -> new CarException(CarExceptionMessage.CAR_NOT_FOUND));
   }
 }

@@ -15,5 +15,4 @@ public interface CarRepository {
   Optional<Car> findById(Long id);
 
   Car save(Car car);
-
 }
