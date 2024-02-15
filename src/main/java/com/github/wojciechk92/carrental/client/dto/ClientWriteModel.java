@@ -1,10 +1,11 @@
 package com.github.wojciechk92.carrental.client.dto;
 
 import com.github.wojciechk92.carrental.client.Client;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import com.github.wojciechk92.carrental.client.ClientStatus;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 
 public class ClientWriteModel {
@@ -21,6 +22,8 @@ public class ClientWriteModel {
   @Min(500_000_000)
   @Max(999_999_999)
   private int tel;
+  @NotNull
+  private ClientStatus status;
 
   public String getFirstName() {
     return firstName;
@@ -54,8 +57,15 @@ public class ClientWriteModel {
     this.tel = tel;
   }
 
-  public Client toClient() {
-    return new Client(firstName, lastName,email, tel);
+  public ClientStatus getStatus() {
+    return status;
   }
 
+  public void setStatus(ClientStatus status) {
+    this.status = status;
+  }
+
+  public Client toClient() {
+    return new Client(firstName, lastName,email, tel, status);
+  }
 }

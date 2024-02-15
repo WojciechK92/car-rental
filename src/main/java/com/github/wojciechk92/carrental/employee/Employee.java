@@ -3,10 +3,7 @@ package com.github.wojciechk92.carrental.employee;
 import com.github.wojciechk92.carrental.employee.dto.EmployeeReadModel;
 import com.github.wojciechk92.carrental.rental.Rental;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.HashSet;
@@ -31,17 +28,22 @@ public class Employee {
   @Min(500_000_000)
   @Max(999_999_999)
   private int tel;
+  @NotNull
+  @Enumerated(EnumType.STRING)
+  @Column(name = "status", columnDefinition = "VARCHAR(30)")
+  private EmployeeStatus status;
   @OneToMany(mappedBy = "employee")
   private Set<Rental> rentals = new HashSet<>();
 
   public Employee() {
   }
 
-  public Employee(String firstName, String lastName, String email, int tel) {
+  public Employee(String firstName, String lastName, String email, int tel, EmployeeStatus status) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.tel = tel;
+    this.status = status;
   }
 
   public Employee(EmployeeReadModel employee) {
@@ -50,6 +52,7 @@ public class Employee {
     this.lastName = employee.getLastName();
     this.email = employee.getEmail();
     this.tel = employee.getTel();
+    this.status = employee.getStatus();
   }
 
   public Long getId() {
@@ -90,6 +93,14 @@ public class Employee {
 
   void setTel(int tel) {
     this.tel = tel;
+  }
+
+  public EmployeeStatus getStatus() {
+    return status;
+  }
+
+  void setStatus(EmployeeStatus status) {
+    this.status = status;
   }
 
   public Set<Rental> getRentals() {

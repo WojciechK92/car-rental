@@ -5,6 +5,7 @@ import com.github.wojciechk92.carrental.client.Client;
 import com.github.wojciechk92.carrental.employee.Employee;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -19,6 +20,10 @@ public class Rental {
   private LocalDateTime returnDate;
   @Min(1)
   private int rentalFor;
+  @NotNull
+  @Enumerated(EnumType.STRING)
+  @Column(name = "status", columnDefinition = "VARCHAR(30)")
+  private RentalStatus status;
   @ManyToOne
   @JoinColumn(name = "client_id")
   private Client client;
@@ -33,8 +38,9 @@ public class Rental {
 
   public Rental() {}
 
-  public Rental(int rentalFor, Client client, Employee employee, Set<Car> cars) {
+  public Rental(int rentalFor, RentalStatus status, Client client, Employee employee, Set<Car> cars) {
     this.rentalFor = rentalFor;
+    this.status = status;
     this.client = client;
     this.employee = employee;
     this.cars = cars;
@@ -70,6 +76,14 @@ public class Rental {
 
   void setRentalFor(int rentalFor) {
     this.rentalFor = rentalFor;
+  }
+
+  public RentalStatus getStatus() {
+    return status;
+  }
+
+  void setStatus(RentalStatus status) {
+    this.status = status;
   }
 
   public Client getClient() {

@@ -4,6 +4,7 @@ import com.github.wojciechk92.carrental.car.Car;
 import com.github.wojciechk92.carrental.client.Client;
 import com.github.wojciechk92.carrental.employee.Employee;
 import com.github.wojciechk92.carrental.rental.Rental;
+import com.github.wojciechk92.carrental.rental.RentalStatus;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
@@ -13,6 +14,8 @@ import java.util.Set;
 public class RentalWriteModel {
   @Min(1)
   private int rentalFor;
+  @NotNull
+  private RentalStatus status;
   @NotNull
   private Long clientId;
   @NotNull
@@ -28,6 +31,14 @@ public class RentalWriteModel {
 
   public void setRentalFor(int rentalFor) {
     this.rentalFor = rentalFor;
+  }
+
+  public RentalStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(RentalStatus status) {
+    this.status = status;
   }
 
   public Long getClientId() {
@@ -55,6 +66,6 @@ public class RentalWriteModel {
   }
 
   public Rental toRental(Client client, Employee employee, Set<Car> cars) {
-    return new Rental(rentalFor, client, employee, cars);
+    return new Rental(rentalFor, status, client, employee, cars);
   }
 }

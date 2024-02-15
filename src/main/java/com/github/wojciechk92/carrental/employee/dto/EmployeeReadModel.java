@@ -1,6 +1,7 @@
 package com.github.wojciechk92.carrental.employee.dto;
 
 import com.github.wojciechk92.carrental.employee.Employee;
+import com.github.wojciechk92.carrental.employee.EmployeeStatus;
 import com.github.wojciechk92.carrental.rental.Rental;
 
 import java.util.List;
@@ -11,6 +12,7 @@ public class EmployeeReadModel {
   private String lastName;
   private String email;
   private int tel;
+  private EmployeeStatus status;
   private List<Long> rentalIdList;
 
   public EmployeeReadModel(Employee employee) {
@@ -19,6 +21,7 @@ public class EmployeeReadModel {
     this.lastName = employee.getLastName();
     this.email = employee.getEmail();
     this.tel = employee.getTel();
+    this.status = employee.getStatus();
     this.rentalIdList = employee.getRentals().stream()
             .map(Rental::getId)
             .toList();
@@ -62,6 +65,14 @@ public class EmployeeReadModel {
 
   public void setTel(int tel) {
     this.tel = tel;
+  }
+
+  public EmployeeStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(EmployeeStatus status) {
+    this.status = status;
   }
 
   public List<Long> getRentalIdList() {

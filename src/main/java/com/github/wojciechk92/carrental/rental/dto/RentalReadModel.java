@@ -2,6 +2,7 @@ package com.github.wojciechk92.carrental.rental.dto;
 
 import com.github.wojciechk92.carrental.car.Car;
 import com.github.wojciechk92.carrental.rental.Rental;
+import com.github.wojciechk92.carrental.rental.RentalStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,6 +12,7 @@ public class RentalReadModel {
   private LocalDateTime rentalDate;
   private LocalDateTime returnDate;
   private int rentalFor;
+  private RentalStatus status;
   private Long clientId;
   private Long employeeId;
   private List<Long> carsIdList;
@@ -20,6 +22,7 @@ public class RentalReadModel {
     this.rentalDate = rental.getRentalDate();
     this.returnDate = rental.getReturnDate();
     this.rentalFor = rental.getRentalFor();
+    this.status = rental.getStatus();
     this.clientId = rental.getClient().getId();
     this.employeeId = rental.getEmployee().getId();
     this.carsIdList = rental.getCars().stream()
@@ -57,6 +60,14 @@ public class RentalReadModel {
 
   public void setRentalFor(int rentalFor) {
     this.rentalFor = rentalFor;
+  }
+
+  public RentalStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(RentalStatus status) {
+    this.status = status;
   }
 
   public Long getClientId() {

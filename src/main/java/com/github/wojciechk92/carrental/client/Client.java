@@ -3,10 +3,7 @@ package com.github.wojciechk92.carrental.client;
 import com.github.wojciechk92.carrental.client.dto.ClientReadModel;
 import com.github.wojciechk92.carrental.rental.Rental;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.HashSet;
@@ -31,17 +28,22 @@ public class Client {
   @Min(500_000_000)
   @Max(999_999_999)
   private int tel;
+  @NotNull
+  @Enumerated(EnumType.STRING)
+  @Column(name = "status", columnDefinition = "VARCHAR(30)")
+  private ClientStatus status;
   @OneToMany(mappedBy = "client")
   private Set<Rental> rentals = new HashSet<>();
 
   public Client() {
   }
 
-  public Client(String firstName, String lastName, String email, int tel) {
+  public Client(String firstName, String lastName, String email, int tel, ClientStatus status) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.tel = tel;
+    this.status = status;
   }
 
   public Client(ClientReadModel client) {
@@ -50,6 +52,7 @@ public class Client {
     this.lastName = client.getLastName();
     this.email = client.getEmail();
     this.tel = client.getTel();
+    this.status = client.getStatus();
   }
 
   public Long getId() {
@@ -90,6 +93,14 @@ public class Client {
 
   void setTel(int tel) {
     this.tel = tel;
+  }
+
+  public ClientStatus getStatus() {
+    return status;
+  }
+
+  void setStatus(ClientStatus status) {
+    this.status = status;
   }
 
   public Set<Rental> getRentals() {
