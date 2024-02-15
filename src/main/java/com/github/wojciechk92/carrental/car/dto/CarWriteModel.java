@@ -2,12 +2,23 @@ package com.github.wojciechk92.carrental.car.dto;
 
 import com.github.wojciechk92.carrental.car.Car;
 import com.github.wojciechk92.carrental.car.CarStatus;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Length;
 
 public class CarWriteModel {
+  @NotBlank
+  @Length(min = 2, max = 30)
   private String make;
+  @NotBlank
+  @Length(min = 2, max = 30)
   private String model;
+  @Min(1990)
   private int productionYear;
+  @NotNull
   private CarStatus status;
+  @Min(0)
   private double pricePerDay;
 
   public String getMake() {

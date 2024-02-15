@@ -2,6 +2,7 @@ package com.github.wojciechk92.carrental.employee;
 
 import com.github.wojciechk92.carrental.employee.dto.EmployeeReadModel;
 import com.github.wojciechk92.carrental.employee.dto.EmployeeWriteModel;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class EmployeeController {
   }
 
   @PostMapping
-  ResponseEntity<EmployeeReadModel> createEmployee(@RequestBody EmployeeWriteModel employee) {
+  ResponseEntity<EmployeeReadModel> createEmployee(@RequestBody @Valid EmployeeWriteModel employee) {
     EmployeeReadModel result = employeeService.createEmployee(employee);
     return ResponseEntity.created(URI.create("/employees/" + result.getId())).body(result);
   }

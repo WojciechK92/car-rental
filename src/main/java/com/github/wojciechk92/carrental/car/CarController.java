@@ -2,6 +2,7 @@ package com.github.wojciechk92.carrental.car;
 
 import com.github.wojciechk92.carrental.car.dto.CarReadModel;
 import com.github.wojciechk92.carrental.car.dto.CarWriteModel;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class CarController {
   }
 
   @PostMapping
-  public ResponseEntity<CarReadModel> createCar(@RequestBody CarWriteModel car) {
+  public ResponseEntity<CarReadModel> createCar(@RequestBody @Valid CarWriteModel car) {
     CarReadModel result = carService.createCar(car);
     return ResponseEntity.created(URI.create("/cars/" + result.getId())).body(result);
   }

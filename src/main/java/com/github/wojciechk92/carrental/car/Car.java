@@ -3,6 +3,10 @@ package com.github.wojciechk92.carrental.car;
 import com.github.wojciechk92.carrental.car.dto.CarReadModel;
 import com.github.wojciechk92.carrental.rental.Rental;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,10 +17,17 @@ public class Car {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+  @NotBlank
+  @Length(min = 2, max = 30)
   private String make;
+  @NotBlank
+  @Length(min = 2, max = 30)
   private String model;
+  @Min(1990)
   private int productionYear;
+  @Min(0)
   private double pricePerDay;
+  @NotNull
   @Enumerated(EnumType.STRING)
   @Column(name = "status", columnDefinition = "VARCHAR(30)")
   private CarStatus status;

@@ -2,6 +2,7 @@ package com.github.wojciechk92.carrental.client;
 
 import com.github.wojciechk92.carrental.client.dto.ClientReadModel;
 import com.github.wojciechk92.carrental.client.dto.ClientWriteModel;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class ClientController {
   }
 
   @PostMapping
-  ResponseEntity<ClientReadModel> createClient(@RequestBody ClientWriteModel client) {
+  ResponseEntity<ClientReadModel> createClient(@RequestBody @Valid ClientWriteModel client) {
     ClientReadModel result = clientService.createClient(client);
     return ResponseEntity.created(URI.create("/clients/" + result.getId())).body(result);
   }

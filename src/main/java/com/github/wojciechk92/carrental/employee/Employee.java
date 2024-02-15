@@ -3,6 +3,11 @@ package com.github.wojciechk92.carrental.employee;
 import com.github.wojciechk92.carrental.employee.dto.EmployeeReadModel;
 import com.github.wojciechk92.carrental.rental.Rental;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,9 +18,18 @@ public class Employee {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+  @NotBlank
+  @Length(min = 3, max = 30)
   private String firstName;
+  @NotBlank
+  @Length(min = 3, max = 30)
   private String lastName;
+  @NotBlank
+  @Email
+  @Length(max = 50)
   private String email;
+  @Min(500_000_000)
+  @Max(999_999_999)
   private int tel;
   @OneToMany(mappedBy = "employee")
   private Set<Rental> rentals = new HashSet<>();

@@ -4,31 +4,23 @@ import com.github.wojciechk92.carrental.car.Car;
 import com.github.wojciechk92.carrental.client.Client;
 import com.github.wojciechk92.carrental.employee.Employee;
 import com.github.wojciechk92.carrental.rental.Rental;
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 import java.util.Set;
 
 public class RentalWriteModel {
-  private LocalDateTime rentalDate;
-  private LocalDateTime returnDate;
+  @Min(1)
   private int rentalFor;
+  @NotNull
   private Long clientId;
+  @NotNull
   private Long employeeId;
+  @NotNull
   private List<Long> carsIdList;
 
   public RentalWriteModel() {}
-
-  public LocalDateTime getRentalDate() {
-    return rentalDate;
-  }
-
-  public void setRentalDate(LocalDateTime rentalDate) {
-    this.rentalDate = rentalDate;
-  }
-
-  public LocalDateTime getReturnDate() {
-    return returnDate;
-  }
 
   public int getRentalFor() {
     return rentalFor;
@@ -36,10 +28,6 @@ public class RentalWriteModel {
 
   public void setRentalFor(int rentalFor) {
     this.rentalFor = rentalFor;
-  }
-
-  public void setReturnDate(LocalDateTime returnDate) {
-    this.returnDate = returnDate;
   }
 
   public Long getClientId() {
@@ -67,6 +55,6 @@ public class RentalWriteModel {
   }
 
   public Rental toRental(Client client, Employee employee, Set<Car> cars) {
-    return new Rental(rentalDate, returnDate, rentalFor, client, employee, cars);
+    return new Rental(rentalFor, client, employee, cars);
   }
 }

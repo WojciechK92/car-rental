@@ -1,9 +1,6 @@
 package com.github.wojciechk92.carrental.rental.dto;
 
 import com.github.wojciechk92.carrental.car.Car;
-import com.github.wojciechk92.carrental.car.dto.CarReadModel;
-import com.github.wojciechk92.carrental.client.dto.ClientReadModel;
-import com.github.wojciechk92.carrental.employee.dto.EmployeeReadModel;
 import com.github.wojciechk92.carrental.rental.Rental;
 
 import java.time.LocalDateTime;

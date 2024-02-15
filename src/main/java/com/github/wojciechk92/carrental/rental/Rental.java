@@ -4,6 +4,7 @@ import com.github.wojciechk92.carrental.car.Car;
 import com.github.wojciechk92.carrental.client.Client;
 import com.github.wojciechk92.carrental.employee.Employee;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -16,6 +17,7 @@ public class Rental {
   private Long id;
   private LocalDateTime rentalDate;
   private LocalDateTime returnDate;
+  @Min(1)
   private int rentalFor;
   @ManyToOne
   @JoinColumn(name = "client_id")
@@ -31,9 +33,7 @@ public class Rental {
 
   public Rental() {}
 
-  public Rental(LocalDateTime rentalDate, LocalDateTime returnDate, int rentalFor, Client client, Employee employee, Set<Car> cars) {
-    this.rentalDate = rentalDate;
-    this.returnDate = returnDate;
+  public Rental(int rentalFor, Client client, Employee employee, Set<Car> cars) {
     this.rentalFor = rentalFor;
     this.client = client;
     this.employee = employee;
@@ -94,5 +94,10 @@ public class Rental {
 
   void setCars(Set<Car> cars) {
     this.cars = cars;
+  }
+
+  @PrePersist
+  private void prePersist() {
+    rentalDate = LocalDateTime.now();
   }
 }
