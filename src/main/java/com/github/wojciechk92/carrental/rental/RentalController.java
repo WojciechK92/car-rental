@@ -34,4 +34,16 @@ public class RentalController {
     RentalReadModel result = rentalService.createRental(rental);
     return ResponseEntity.created(URI.create("/rentals/" + result.getId())).body(result);
   }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<Void> updateEmployee(@RequestBody @Valid RentalWriteModel rental, @PathVariable Long id) {
+    rentalService.updateRental(rental, id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/{id}")
+  public ResponseEntity<Void> setStatusTo(@RequestParam RentalStatus status, @PathVariable Long id) {
+    rentalService.setStatusTo(status, id);
+    return ResponseEntity.noContent().build();
+  }
 }

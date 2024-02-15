@@ -58,10 +58,6 @@ public class Rental {
     return rentalDate;
   }
 
-  void setRentalDate(LocalDateTime orderDate) {
-    this.rentalDate = orderDate;
-  }
-
   public LocalDateTime getReturnDate() {
     return returnDate;
   }

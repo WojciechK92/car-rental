@@ -14,4 +14,8 @@ public interface EmployeeService {
 
  EmployeeReadModel createEmployee(EmployeeWriteModel employee);
 
+ void updateEmployee(EmployeeWriteModel employee, Long id);
+
+ void setStatusTo(EmployeeStatus status, Long id);
+
 }

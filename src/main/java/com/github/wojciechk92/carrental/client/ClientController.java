@@ -37,4 +37,17 @@ public class ClientController {
     return ResponseEntity.created(URI.create("/clients/" + result.getId())).body(result);
   }
 
+  @PutMapping("/{id}")
+  ResponseEntity<Void> updateClient(@RequestBody @Valid ClientWriteModel client, @PathVariable Long id) {
+    clientService.updateClient(client, id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/{id}")
+  public ResponseEntity<Void> setStatusTo(@RequestParam ClientStatus status, @PathVariable Long id) {
+    clientService.setStatusTo(status, id);
+    return ResponseEntity.noContent().build();
+  }
+
+
 }

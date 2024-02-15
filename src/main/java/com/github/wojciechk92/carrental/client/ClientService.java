@@ -14,4 +14,8 @@ public interface ClientService {
 
  ClientReadModel createClient(ClientWriteModel employee);
 
+ void updateClient(ClientWriteModel client, Long id);
+
+ void setStatusTo(ClientStatus status, Long id);
+
 }

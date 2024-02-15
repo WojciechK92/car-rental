@@ -8,6 +8,7 @@ import com.github.wojciechk92.carrental.rental.dto.RentalWriteModel;
 import com.github.wojciechk92.carrental.rental.exception.RentalException;
 import com.github.wojciechk92.carrental.rental.exception.RentalExceptionMessage;
 import com.github.wojciechk92.carrental.rental.validator.RentalValidator;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -51,4 +52,33 @@ class RentalServiceImpl implements RentalService {
     return new RentalReadModel(result);
   }
 
+  @Transactional
+  @Override
+  public void updateRental(RentalWriteModel toUpdate, Long id) {
+    rentalRepository.findById(id)
+            .map(rental -> {
+              Client client = validator.checkClientById(toUpdate.getClientId());
+              Employee employee = validator.checkEmployeeById(toUpdate.getEmployeeId());
+              Set<Car> cars = validator.checkCarsByIdList(toUpdate.getCarsIdList());
+
+              rental.setRentalFor(toUpdate.getRentalFor());
+              rental.setStatus(toUpdate.getStatus());
+              rental.setClient(client);
+              rental.setEmployee(employee);
+              rental.setCars(cars);
+              return rental;
+            })
+            .orElseThrow(() -> new RentalException(RentalExceptionMessage.RENTAL_NOT_FOUND));
+  }
+
+  @Transactional
+  @Override
+  public void setStatusTo(RentalStatus status, Long id) {
+    rentalRepository.findById(id)
+            .map(rental -> {
+              rental.setStatus(status);
+              return rental;
+            })
+            .orElseThrow(() -> new RentalException(RentalExceptionMessage.RENTAL_NOT_FOUND));
+  }
 }

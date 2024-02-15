@@ -35,4 +35,16 @@ public class EmployeeController {
     return ResponseEntity.created(URI.create("/employees/" + result.getId())).body(result);
   }
 
+  @PutMapping("/{id}")
+  public ResponseEntity<Void> updateEmployee(@RequestBody @Valid EmployeeWriteModel employee, @PathVariable Long id) {
+    employeeService.updateEmployee(employee, id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/{id}")
+  public ResponseEntity<Void> setStatusTo(@RequestParam EmployeeStatus status, @PathVariable Long id) {
+    employeeService.setStatusTo(status, id);
+    return ResponseEntity.noContent().build();
+  }
+
 }
