@@ -1,4 +1,4 @@
-package com.github.wojciechk92.carrental.common.embeddable;
+package com.github.wojciechk92.carrental.common.personalDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

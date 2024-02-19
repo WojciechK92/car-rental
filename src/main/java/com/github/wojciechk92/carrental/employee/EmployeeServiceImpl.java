@@ -1,10 +1,10 @@
 package com.github.wojciechk92.carrental.employee;
 
+import com.github.wojciechk92.carrental.common.personalDetails.PersonalDetailsValidator;
 import com.github.wojciechk92.carrental.employee.dto.EmployeeReadModel;
 import com.github.wojciechk92.carrental.employee.dto.EmployeeWriteModel;
 import com.github.wojciechk92.carrental.employee.exception.EmployeeException;
 import com.github.wojciechk92.carrental.employee.exception.EmployeeExceptionMessage;
-import com.github.wojciechk92.carrental.employee.validator.EmployeeValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -15,10 +15,10 @@ import java.util.List;
 @Service
 class EmployeeServiceImpl implements EmployeeService {
   private final EmployeeRepository employeeRepository;
-  private final EmployeeValidator validator;
+  private final PersonalDetailsValidator validator;
 
   @Autowired
-  EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeValidator validator) {
+  EmployeeServiceImpl(EmployeeRepository employeeRepository, PersonalDetailsValidator validator) {
     this.employeeRepository = employeeRepository;
     this.validator = validator;
   }
@@ -39,12 +39,7 @@ class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   public EmployeeReadModel createEmployee(EmployeeWriteModel toSave) {
-    boolean uniqueEmail = validator.validateUniqueEmail(toSave.getEmail());
-    boolean uniqueTel = validator.validateUniqueTel(toSave.getTel());
-
-    if (!uniqueEmail) throw new EmployeeException(EmployeeExceptionMessage.EMAIL_IS_NOT_UNIQUE);
-    if (!uniqueTel) throw new EmployeeException(EmployeeExceptionMessage.TEL_IS_NOT_UNIQUE);
-
+    validator.validateOnSaveForEmployee(toSave);
     Employee result = employeeRepository.save(toSave.toEmployee());
     return new EmployeeReadModel(result);
   }
@@ -52,13 +47,9 @@ class EmployeeServiceImpl implements EmployeeService {
   @Transactional
   @Override
   public void updateEmployee(EmployeeWriteModel toUpdate, Long id) {
-    boolean uniqueEmail = validator.validateUniqueEmail(toUpdate.getEmail());
-    boolean uniqueTel = validator.validateUniqueTel(toUpdate.getTel());
-
     employeeRepository.findById(id)
             .map(employee -> {
-              if (!uniqueEmail && !employee.getPersonalDetails().getEmail().equals(toUpdate.getEmail())) throw new EmployeeException(EmployeeExceptionMessage.EMAIL_IS_NOT_UNIQUE);
-              if (!uniqueTel && employee.getPersonalDetails().getTel() != toUpdate.getTel()) throw new EmployeeException(EmployeeExceptionMessage.TEL_IS_NOT_UNIQUE);
+              validator.validateOnUpdateForEmployee(employee, toUpdate);
               employee.getPersonalDetails().setFirstName(toUpdate.getFirstName());
               employee.getPersonalDetails().setLastName(toUpdate.getLastName());
               employee.getPersonalDetails().setEmail(toUpdate.getEmail());

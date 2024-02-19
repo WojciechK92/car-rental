@@ -1,11 +1,10 @@
 package com.github.wojciechk92.carrental.client;
 
 import com.github.wojciechk92.carrental.client.dto.ClientReadModel;
-import com.github.wojciechk92.carrental.common.embeddable.PersonalDetails;
+import com.github.wojciechk92.carrental.common.personalDetails.PersonalDetails;
 import com.github.wojciechk92.carrental.rental.Rental;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import org.hibernate.validator.constraints.Length;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
