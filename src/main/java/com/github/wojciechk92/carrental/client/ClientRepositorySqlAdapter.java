@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 interface ClientRepositorySqlAdapter extends ClientRepository, JpaRepository<Client, Long> {
 
   @Override
-  boolean existsByEmail(String email);
+  boolean existsByPersonalDetailsEmail(String email);
 
   @Override
-  boolean existsByTel(int tel);
+  boolean existsByPersonalDetailsTel(int tel);
 
 }

@@ -1,6 +1,7 @@
 package com.github.wojciechk92.carrental.client;
 
 import com.github.wojciechk92.carrental.client.dto.ClientReadModel;
+import com.github.wojciechk92.carrental.common.embeddable.PersonalDetails;
 import com.github.wojciechk92.carrental.rental.Rental;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -15,21 +16,8 @@ public class Client {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  @NotBlank
-  @Length(min = 3, max = 30)
-  private String firstName;
-  @NotBlank
-  @Length(min = 3, max = 30)
-  private String lastName;
-  @NotBlank
-  @Email
-  @Length(max = 50)
-  @Column(unique = true)
-  private String email;
-  @Min(500_000_000)
-  @Max(999_999_999)
-  @Column(unique = true)
-  private int tel;
+  @Embedded
+  private PersonalDetails personalDetails;
   @NotNull
   @Enumerated(EnumType.STRING)
   @Column(name = "status", columnDefinition = "VARCHAR(30)")
@@ -41,19 +29,13 @@ public class Client {
   }
 
   public Client(String firstName, String lastName, String email, int tel, ClientStatus status) {
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.email = email;
-    this.tel = tel;
+    personalDetails = new PersonalDetails(firstName, lastName, email, tel);
     this.status = status;
   }
 
   public Client(ClientReadModel client) {
     this.id = client.getId();
-    this.firstName = client.getFirstName();
-    this.lastName = client.getLastName();
-    this.email = client.getEmail();
-    this.tel = client.getTel();
+    personalDetails = new PersonalDetails(client.getFirstName(), client.getLastName(), client.getEmail(), client.getTel());
     this.status = client.getStatus();
   }
 
@@ -65,36 +47,12 @@ public class Client {
     this.id = id;
   }
 
-  public String getFirstName() {
-    return firstName;
+  public PersonalDetails getPersonalDetails() {
+    return personalDetails;
   }
 
-  void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
-
-  public String getLastName() {
-    return lastName;
-  }
-
-  void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  void setEmail(String email) {
-    this.email = email;
-  }
-
-  public int getTel() {
-    return tel;
-  }
-
-  void setTel(int tel) {
-    this.tel = tel;
+  void setPersonalDetails(PersonalDetails personalDetails) {
+    this.personalDetails = personalDetails;
   }
 
   public ClientStatus getStatus() {

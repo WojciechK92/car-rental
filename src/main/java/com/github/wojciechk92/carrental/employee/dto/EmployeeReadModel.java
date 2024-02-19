@@ -17,10 +17,10 @@ public class EmployeeReadModel {
 
   public EmployeeReadModel(Employee employee) {
     this.id = employee.getId();
-    this.firstName = employee.getFirstName();
-    this.lastName = employee.getLastName();
-    this.email = employee.getEmail();
-    this.tel = employee.getTel();
+    this.firstName = employee.getPersonalDetails().getFirstName();
+    this.lastName = employee.getPersonalDetails().getLastName();
+    this.email = employee.getPersonalDetails().getEmail();
+    this.tel = employee.getPersonalDetails().getTel();
     this.status = employee.getStatus();
     this.rentalIdList = employee.getRentals().stream()
             .map(Rental::getId)

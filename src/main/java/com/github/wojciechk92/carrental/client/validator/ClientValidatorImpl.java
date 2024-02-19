@@ -15,11 +15,11 @@ public class ClientValidatorImpl implements ClientValidator {
 
   @Override
   public boolean validateUniqueEmail(String email) {
-    return !clientRepository.existsByEmail(email);
+    return !clientRepository.existsByPersonalDetailsEmail(email);
   }
 
   @Override
   public boolean validateUniqueTel(int tel) {
-    return !clientRepository.existsByTel(tel);
+    return !clientRepository.existsByPersonalDetailsTel(tel);
   }
 }

@@ -57,12 +57,12 @@ class EmployeeServiceImpl implements EmployeeService {
 
     employeeRepository.findById(id)
             .map(employee -> {
-              if (!uniqueEmail && !employee.getEmail().equals(toUpdate.getEmail())) throw new EmployeeException(EmployeeExceptionMessage.EMAIL_IS_NOT_UNIQUE);
-              if (!uniqueTel && employee.getTel() != toUpdate.getTel()) throw new EmployeeException(EmployeeExceptionMessage.TEL_IS_NOT_UNIQUE);
-              employee.setFirstName(toUpdate.getFirstName());
-              employee.setLastName(toUpdate.getLastName());
-              employee.setEmail(toUpdate.getEmail());
-              employee.setTel(toUpdate.getTel());
+              if (!uniqueEmail && !employee.getPersonalDetails().getEmail().equals(toUpdate.getEmail())) throw new EmployeeException(EmployeeExceptionMessage.EMAIL_IS_NOT_UNIQUE);
+              if (!uniqueTel && employee.getPersonalDetails().getTel() != toUpdate.getTel()) throw new EmployeeException(EmployeeExceptionMessage.TEL_IS_NOT_UNIQUE);
+              employee.getPersonalDetails().setFirstName(toUpdate.getFirstName());
+              employee.getPersonalDetails().setLastName(toUpdate.getLastName());
+              employee.getPersonalDetails().setEmail(toUpdate.getEmail());
+              employee.getPersonalDetails().setTel(toUpdate.getTel());
               employee.setStatus(toUpdate.getStatus());
               return employee;
             })

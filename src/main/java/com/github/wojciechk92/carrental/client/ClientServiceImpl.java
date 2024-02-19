@@ -57,12 +57,12 @@ class ClientServiceImpl implements ClientService {
 
     clientRepository.findById(id)
             .map(client -> {
-              if (!uniqueEmail && !client.getEmail().equals(toUpdate.getEmail())) throw new ClientException(ClientExceptionMessage.EMAIL_IS_NOT_UNIQUE);
-              if (!uniqueTel && client.getTel() != toUpdate.getTel()) throw new ClientException(ClientExceptionMessage.TEL_IS_NOT_UNIQUE);
-              client.setFirstName(toUpdate.getFirstName());
-              client.setLastName(toUpdate.getLastName());
-              client.setEmail(toUpdate.getEmail());
-              client.setTel(toUpdate.getTel());
+              if (!uniqueEmail && !client.getPersonalDetails().getEmail().equals(toUpdate.getEmail())) throw new ClientException(ClientExceptionMessage.EMAIL_IS_NOT_UNIQUE);
+              if (!uniqueTel && client.getPersonalDetails().getTel() != toUpdate.getTel()) throw new ClientException(ClientExceptionMessage.TEL_IS_NOT_UNIQUE);
+              client.getPersonalDetails().setFirstName(toUpdate.getFirstName());
+              client.getPersonalDetails().setLastName(toUpdate.getLastName());
+              client.getPersonalDetails().setEmail(toUpdate.getEmail());
+              client.getPersonalDetails().setTel(toUpdate.getTel());
               client.setStatus(toUpdate.getStatus());
               return client;
             })

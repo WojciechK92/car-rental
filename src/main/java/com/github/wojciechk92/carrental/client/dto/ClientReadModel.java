@@ -17,10 +17,10 @@ public class ClientReadModel {
 
   public ClientReadModel(Client client) {
     this.id = client.getId();
-    this.firstName = client.getFirstName();
-    this.lastName = client.getLastName();
-    this.email = client.getEmail();
-    this.tel = client.getTel();
+    this.firstName = client.getPersonalDetails().getFirstName();
+    this.lastName = client.getPersonalDetails().getLastName();
+    this.email = client.getPersonalDetails().getEmail();
+    this.tel = client.getPersonalDetails().getTel();
     this.status = client.getStatus();
     this.rentalIdList = client.getRentals().stream()
             .map(Rental::getId)

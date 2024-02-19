@@ -13,11 +13,11 @@ public class EmployeeValidatorImpl implements EmployeeValidator {
 
   @Override
   public boolean validateUniqueEmail(String email) {
-    return !employeeRepository.existsByEmail(email);
+    return !employeeRepository.existsByPersonalDetailsEmail(email);
   }
 
   @Override
   public boolean validateUniqueTel(int tel) {
-    return !employeeRepository.existsByTel(tel);
+    return !employeeRepository.existsByPersonalDetailsTel(tel);
   }
 }
