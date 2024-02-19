@@ -6,4 +6,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EmployeeRepositorySqlAdapter extends EmployeeRepository, JpaRepository<Employee, Long> {
 
+  @Override
+  boolean existsByEmail(String email);
+
+  @Override
+  boolean existsByTel(int tel);
+
 }

@@ -13,4 +13,8 @@ public interface EmployeeRepository {
 
   Employee save(Employee employee);
 
+  boolean existsByEmail(String email);
+
+  boolean existsByTel(int tel);
+
 }

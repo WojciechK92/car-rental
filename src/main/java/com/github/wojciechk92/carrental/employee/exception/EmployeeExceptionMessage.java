@@ -1,7 +1,9 @@
 package com.github.wojciechk92.carrental.employee.exception;
 
 public enum EmployeeExceptionMessage {
-  EMPLOYEE_NOT_FOUND("The employee with given id does not exist!");
+  EMPLOYEE_NOT_FOUND("The employee with given id does not exist!"),
+  EMAIL_IS_NOT_UNIQUE("Email is not unique!"),
+  TEL_IS_NOT_UNIQUE("Tel is not unique!");
 
   private final String message;
 

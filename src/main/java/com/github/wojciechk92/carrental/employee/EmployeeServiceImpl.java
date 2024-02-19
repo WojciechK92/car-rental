@@ -4,6 +4,7 @@ import com.github.wojciechk92.carrental.employee.dto.EmployeeReadModel;
 import com.github.wojciechk92.carrental.employee.dto.EmployeeWriteModel;
 import com.github.wojciechk92.carrental.employee.exception.EmployeeException;
 import com.github.wojciechk92.carrental.employee.exception.EmployeeExceptionMessage;
+import com.github.wojciechk92.carrental.employee.validator.EmployeeValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -14,10 +15,12 @@ import java.util.List;
 @Service
 class EmployeeServiceImpl implements EmployeeService {
   private final EmployeeRepository employeeRepository;
+  private final EmployeeValidator validator;
 
   @Autowired
-  EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+  EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeValidator validator) {
     this.employeeRepository = employeeRepository;
+    this.validator = validator;
   }
 
   @Override
@@ -36,6 +39,12 @@ class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   public EmployeeReadModel createEmployee(EmployeeWriteModel toSave) {
+    boolean uniqueEmail = validator.validateUniqueEmail(toSave.getEmail());
+    boolean uniqueTel = validator.validateUniqueTel(toSave.getTel());
+
+    if (!uniqueEmail) throw new EmployeeException(EmployeeExceptionMessage.EMAIL_IS_NOT_UNIQUE);
+    if (!uniqueTel) throw new EmployeeException(EmployeeExceptionMessage.TEL_IS_NOT_UNIQUE);
+
     Employee result = employeeRepository.save(toSave.toEmployee());
     return new EmployeeReadModel(result);
   }
@@ -43,8 +52,13 @@ class EmployeeServiceImpl implements EmployeeService {
   @Transactional
   @Override
   public void updateEmployee(EmployeeWriteModel toUpdate, Long id) {
+    boolean uniqueEmail = validator.validateUniqueEmail(toUpdate.getEmail());
+    boolean uniqueTel = validator.validateUniqueTel(toUpdate.getTel());
+
     employeeRepository.findById(id)
             .map(employee -> {
+              if (!uniqueEmail && !employee.getEmail().equals(toUpdate.getEmail())) throw new EmployeeException(EmployeeExceptionMessage.EMAIL_IS_NOT_UNIQUE);
+              if (!uniqueTel && employee.getTel() != toUpdate.getTel()) throw new EmployeeException(EmployeeExceptionMessage.TEL_IS_NOT_UNIQUE);
               employee.setFirstName(toUpdate.getFirstName());
               employee.setLastName(toUpdate.getLastName());
               employee.setEmail(toUpdate.getEmail());

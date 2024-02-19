@@ -13,14 +13,18 @@ public class CarExceptionHandler {
   public ResponseEntity<ExceptionMessage> carExceptionHandler(CarException e) {
     HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
     ExceptionMessage body = new ExceptionMessage();
+    CarExceptionMessage exceptionMessage = e.getExceptionMessage();
     String message = e.getExceptionMessage().getMessage();
 
-    if (CarExceptionMessage.CAR_NOT_FOUND.equals(e.getExceptionMessage())) {
+    if (CarExceptionMessage.CAR_NOT_FOUND.equals(exceptionMessage)) {
       httpStatus = HttpStatus.NOT_FOUND;
       body.addError("carId", message);
-    } else if (CarExceptionMessage.LIST_CONTAINS_UNAVAILABLE_CAR.equals(e.getExceptionMessage())) {
+    } else if (CarExceptionMessage.LIST_CONTAINS_UNAVAILABLE_CAR.equals(exceptionMessage)) {
       httpStatus = HttpStatus.BAD_REQUEST;
       body.addError("carList", message);
+    } else if (CarExceptionMessage.CAR_PRODUCTION_DATE_IS_INVALID.equals(exceptionMessage)){
+      httpStatus = HttpStatus.BAD_REQUEST;
+      body.addError("productionYear", message);
     } else {
       body.addError(null, message);
     }
