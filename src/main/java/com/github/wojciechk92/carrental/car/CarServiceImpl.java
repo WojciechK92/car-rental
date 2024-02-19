@@ -4,6 +4,7 @@ import com.github.wojciechk92.carrental.car.dto.CarReadModel;
 import com.github.wojciechk92.carrental.car.dto.CarWriteModel;
 import com.github.wojciechk92.carrental.car.exception.CarException;
 import com.github.wojciechk92.carrental.car.exception.CarExceptionMessage;
+import com.github.wojciechk92.carrental.car.validator.CarValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -14,10 +15,12 @@ import java.util.List;
 @Service
 class CarServiceImpl implements CarService {
   private final CarRepository carRepository;
+  private final CarValidator carValidator;
 
   @Autowired
-  CarServiceImpl(CarRepository carRepository) {
+  CarServiceImpl(CarRepository carRepository, CarValidator carValidator) {
     this.carRepository = carRepository;
+    this.carValidator = carValidator;
   }
 
   @Override
@@ -45,6 +48,7 @@ class CarServiceImpl implements CarService {
 
   @Override
   public CarReadModel createCar(CarWriteModel toSave) {
+    carValidator.validateCarYear(toSave.getProductionYear());
     Car result = carRepository.save(toSave.toCar());
     return new CarReadModel(result);
   }
@@ -53,6 +57,7 @@ class CarServiceImpl implements CarService {
   @Transactional
   @Override
   public void updateCar(CarWriteModel toUpdate, Long id) {
+    carValidator.validateCarYear(toUpdate.getProductionYear());
 
     carRepository.findById(id)
             .map(car -> {
