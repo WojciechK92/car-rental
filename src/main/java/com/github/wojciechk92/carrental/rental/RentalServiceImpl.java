@@ -1,8 +1,5 @@
 package com.github.wojciechk92.carrental.rental;
 
-import com.github.wojciechk92.carrental.car.Car;
-import com.github.wojciechk92.carrental.client.Client;
-import com.github.wojciechk92.carrental.employee.Employee;
 import com.github.wojciechk92.carrental.rental.dto.RentalReadModel;
 import com.github.wojciechk92.carrental.rental.dto.RentalWriteModel;
 import com.github.wojciechk92.carrental.rental.exception.RentalException;
@@ -14,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 class RentalServiceImpl implements RentalService {
@@ -43,11 +39,7 @@ class RentalServiceImpl implements RentalService {
 
   @Override
   public RentalReadModel createRental(RentalWriteModel toSave) {
-    Client client = validator.checkClientById(toSave.getClientId());
-    Employee employee = validator.checkEmployeeById(toSave.getEmployeeId());
-    Set<Car> cars = validator.checkCarsByIdList(toSave.getCarsIdList());
-
-    Rental rental = toSave.toRental(client, employee, cars);
+    Rental rental = validator.validateRentalWriteModel(toSave);
     Rental result = rentalRepository.save(rental);
     return new RentalReadModel(result);
   }
@@ -56,16 +48,9 @@ class RentalServiceImpl implements RentalService {
   @Override
   public void updateRental(RentalWriteModel toUpdate, Long id) {
     rentalRepository.findById(id)
-            .map(rental -> {
-              Client client = validator.checkClientById(toUpdate.getClientId());
-              Employee employee = validator.checkEmployeeById(toUpdate.getEmployeeId());
-              Set<Car> cars = validator.checkCarsByIdList(toUpdate.getCarsIdList());
-
-              rental.setRentalFor(toUpdate.getRentalFor());
-              rental.setStatus(toUpdate.getStatus());
-              rental.setClient(client);
-              rental.setEmployee(employee);
-              rental.setCars(cars);
+            .map(rentalFromDb -> {
+              Rental rental = validator.validateRentalWriteModel(toUpdate);
+              rental.setId(rentalFromDb.getId());
               return rental;
             })
             .orElseThrow(() -> new RentalException(RentalExceptionMessage.RENTAL_NOT_FOUND));

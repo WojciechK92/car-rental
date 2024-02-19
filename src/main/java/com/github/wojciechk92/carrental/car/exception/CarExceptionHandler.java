@@ -12,15 +12,19 @@ public class CarExceptionHandler {
   @ExceptionHandler(CarException.class)
   public ResponseEntity<ExceptionMessage> carExceptionHandler(CarException e) {
     HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-    ExceptionMessage message = new ExceptionMessage();
+    ExceptionMessage body = new ExceptionMessage();
+    String message = e.getExceptionMessage().getMessage();
 
     if (CarExceptionMessage.CAR_NOT_FOUND.equals(e.getExceptionMessage())) {
       httpStatus = HttpStatus.NOT_FOUND;
-      message.addError("carId", e.getExceptionMessage().getMessage());
+      body.addError("carId", message);
+    } else if (CarExceptionMessage.LIST_CONTAINS_UNAVAILABLE_CAR.equals(e.getExceptionMessage())) {
+      httpStatus = HttpStatus.BAD_REQUEST;
+      body.addError("carList", message);
     } else {
-      message.addError("clientId", e.getExceptionMessage().getMessage());
+      body.addError("clientId", message);
     }
 
-    return ResponseEntity.status(httpStatus).body(message);
+    return ResponseEntity.status(httpStatus).body(body);
   }
 }

@@ -32,7 +32,7 @@ class CarServiceImpl implements CarService {
     List<CarReadModel> result = carRepository.findAllByIdIsIn(list).stream()
             .map(CarReadModel::new)
             .toList();
-    System.out.println(result);
+    if (list.size() != result.size()) throw new CarException(CarExceptionMessage.LIST_CONTAINS_UNAVAILABLE_CAR);
     return result;
   }
 
