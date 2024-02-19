@@ -4,6 +4,7 @@ import com.github.wojciechk92.carrental.client.dto.ClientReadModel;
 import com.github.wojciechk92.carrental.client.dto.ClientWriteModel;
 import com.github.wojciechk92.carrental.client.exception.ClientException;
 import com.github.wojciechk92.carrental.client.exception.ClientExceptionMessage;
+import com.github.wojciechk92.carrental.client.validator.ClientValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -14,10 +15,12 @@ import java.util.List;
 @Service
 class ClientServiceImpl implements ClientService {
   private final ClientRepository clientRepository;
+  private final ClientValidator validator;
 
   @Autowired
-  ClientServiceImpl(ClientRepository clientRepository) {
+  ClientServiceImpl(ClientRepository clientRepository, ClientValidator validator) {
     this.clientRepository = clientRepository;
+    this.validator = validator;
   }
 
   @Override
@@ -36,6 +39,12 @@ class ClientServiceImpl implements ClientService {
 
   @Override
   public ClientReadModel createClient(ClientWriteModel toSave) {
+    boolean uniqueEmail = validator.validateUniqueEmail(toSave.getEmail());
+    boolean uniqueTel = validator.validateUniqueTel(toSave.getTel());
+
+    if (!uniqueEmail) throw new ClientException(ClientExceptionMessage.EMAIL_IS_NOT_UNIQUE);
+    if (!uniqueTel) throw new ClientException(ClientExceptionMessage.TEL_IS_NOT_UNIQUE);
+
     Client result = clientRepository.save(toSave.toClient());
     return new ClientReadModel(result);
   }
@@ -43,8 +52,13 @@ class ClientServiceImpl implements ClientService {
   @Transactional
   @Override
   public void updateClient(ClientWriteModel toUpdate, Long id) {
+    boolean uniqueEmail = validator.validateUniqueEmail(toUpdate.getEmail());
+    boolean uniqueTel = validator.validateUniqueTel(toUpdate.getTel());
+
     clientRepository.findById(id)
             .map(client -> {
+              if (!uniqueEmail && !client.getEmail().equals(toUpdate.getEmail())) throw new ClientException(ClientExceptionMessage.EMAIL_IS_NOT_UNIQUE);
+              if (!uniqueTel && client.getTel() != toUpdate.getTel()) throw new ClientException(ClientExceptionMessage.TEL_IS_NOT_UNIQUE);
               client.setFirstName(toUpdate.getFirstName());
               client.setLastName(toUpdate.getLastName());
               client.setEmail(toUpdate.getEmail());

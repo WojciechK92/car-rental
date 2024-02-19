@@ -4,6 +4,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ClientRepositorySqlAdapter extends ClientRepository, JpaRepository<Client, Long> {
+interface ClientRepositorySqlAdapter extends ClientRepository, JpaRepository<Client, Long> {
+
+  @Override
+  boolean existsByEmail(String email);
+
+  @Override
+  boolean existsByTel(int tel);
 
 }

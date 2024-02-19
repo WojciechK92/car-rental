@@ -24,9 +24,11 @@ public class Client {
   @NotBlank
   @Email
   @Length(max = 50)
+  @Column(unique = true)
   private String email;
   @Min(500_000_000)
   @Max(999_999_999)
+  @Column(unique = true)
   private int tel;
   @NotNull
   @Enumerated(EnumType.STRING)

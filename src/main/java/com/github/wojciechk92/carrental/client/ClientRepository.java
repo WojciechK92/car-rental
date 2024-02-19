@@ -13,4 +13,8 @@ public interface ClientRepository {
 
   Client save(Client client);
 
+  boolean existsByEmail(String email);
+
+  boolean existsByTel(int tel);
+
 }
