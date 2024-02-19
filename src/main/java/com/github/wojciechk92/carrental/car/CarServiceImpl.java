@@ -24,8 +24,14 @@ class CarServiceImpl implements CarService {
   }
 
   @Override
-  public List<CarReadModel> getCars(Pageable pageable) {
-    return carRepository.findAll(pageable).getContent().stream()
+  public List<CarReadModel> getCars(CarStatus status, Pageable pageable) {
+    if (status == null) {
+      return carRepository.findAll(pageable).getContent().stream()
+              .map(CarReadModel::new)
+              .toList();
+    }
+
+    return carRepository.findAllByStatus(status, pageable).getContent().stream()
             .map(CarReadModel::new)
             .toList();
   }

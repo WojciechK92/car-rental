@@ -15,4 +15,6 @@ public interface CarRepository {
   Optional<Car> findById(Long id);
 
   Car save(Car car);
+
+  Page<Car> findAllByStatus(CarStatus status, Pageable pageable);
 }

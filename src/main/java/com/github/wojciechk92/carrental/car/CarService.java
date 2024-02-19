@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CarService {
 
-  List<CarReadModel> getCars(Pageable pageable);
+  List<CarReadModel> getCars(CarStatus status, Pageable pageable);
 
   List<CarReadModel> getCarsByIdList(List<Long> list);
 

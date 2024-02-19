@@ -22,8 +22,8 @@ public class CarController {
   }
 
   @GetMapping
-  public ResponseEntity<List<CarReadModel>> getCars(Pageable pageable) {
-    return ResponseEntity.ok(carService.getCars(pageable));
+  public ResponseEntity<List<CarReadModel>> getCars(@RequestParam(required = false) CarStatus status, Pageable pageable) {
+    return ResponseEntity.ok(carService.getCars(status, pageable));
   }
 
   @GetMapping("/{id}")
