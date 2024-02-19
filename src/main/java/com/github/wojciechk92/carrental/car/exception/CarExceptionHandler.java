@@ -22,7 +22,7 @@ public class CarExceptionHandler {
       httpStatus = HttpStatus.BAD_REQUEST;
       body.addError("carList", message);
     } else {
-      body.addError("clientId", message);
+      body.addError(null, message);
     }
 
     return ResponseEntity.status(httpStatus).body(body);

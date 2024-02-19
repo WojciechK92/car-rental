@@ -18,7 +18,7 @@ public class RentalExceptionHandler {
       httpStatus = HttpStatus.NOT_FOUND;
       message.addError("rentalId", e.getExceptionMessage().getMessage());
     } else {
-      message.addError("rental", e.getExceptionMessage().getMessage());
+      message.addError(null, e.getExceptionMessage().getMessage());
     }
 
     return ResponseEntity.status(httpStatus).body(message);

@@ -67,8 +67,8 @@ class RentalValidatorImpl implements RentalValidator {
   private Set<Car> checkCarsByIdList(List<Long> list) {
     List<CarReadModel> result = carService.getCarsByIdList(list);
 
-    boolean statusIsAvailable = result.stream().anyMatch(car -> CarStatus.AVAILABLE != car.getStatus());
-    if (!statusIsAvailable) throw  new RentalException(RentalExceptionMessage.CAR_STATUS_IS_NOT_AVAILABLE);
+    boolean statusIsNotAvailable = result.stream().anyMatch(car -> CarStatus.AVAILABLE != car.getStatus());
+    if (statusIsNotAvailable) throw new RentalException(RentalExceptionMessage.CAR_STATUS_IS_NOT_AVAILABLE);
 
     return result.stream()
             .map(Car::new)

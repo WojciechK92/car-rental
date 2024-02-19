@@ -18,7 +18,7 @@ public class ClientExceptionHandler {
       httpStatus = HttpStatus.NOT_FOUND;
       message.addError("clientId", e.getExceptionMessage().getMessage());
     } else {
-      message.addError("client", e.getExceptionMessage().getMessage());
+      message.addError(null, e.getExceptionMessage().getMessage());
     }
 
     return ResponseEntity.status(httpStatus).body(message);
