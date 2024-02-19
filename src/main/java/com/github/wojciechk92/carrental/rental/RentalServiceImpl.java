@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -61,6 +62,9 @@ class RentalServiceImpl implements RentalService {
   public void setStatusTo(RentalStatus status, Long id) {
     rentalRepository.findById(id)
             .map(rental -> {
+              if (RentalStatus.COMPLETED.equals(status)) {
+                rental.setReturnDate(LocalDateTime.now());
+              }
               rental.setStatus(status);
               return rental;
             })
