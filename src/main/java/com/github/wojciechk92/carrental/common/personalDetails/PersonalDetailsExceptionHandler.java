@@ -12,17 +12,16 @@ public class PersonalDetailsExceptionHandler {
   @ExceptionHandler(PersonalDetailsException.class)
   public ResponseEntity<ExceptionMessage> personalDetailsExceptionHandler(PersonalDetailsException e) {
     ExceptionMessage body = new ExceptionMessage();
-    HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+    HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
     PersonalDetailsExceptionMessage exceptionMessage = e.getExceptionMessage();
     String message = e.getExceptionMessage().getMessage();
 
     if (PersonalDetailsExceptionMessage.EMAIL_IS_NOT_UNIQUE.equals(exceptionMessage)) {
-      httpStatus = HttpStatus.BAD_REQUEST;
       body.addError("email", message);
     } else if (PersonalDetailsExceptionMessage.TEL_IS_NOT_UNIQUE.equals(exceptionMessage)) {
-      httpStatus = HttpStatus.BAD_REQUEST;
       body.addError("tel", message);
     } else {
+      httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
       body.addError(null, message);
     }
 

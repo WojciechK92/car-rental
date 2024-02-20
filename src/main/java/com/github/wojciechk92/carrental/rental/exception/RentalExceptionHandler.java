@@ -11,16 +11,25 @@ public class RentalExceptionHandler {
 
   @ExceptionHandler(RentalException.class)
   public ResponseEntity<ExceptionMessage> rentalExceptionHandler(RentalException e) {
-    HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-    ExceptionMessage message = new ExceptionMessage();
+    HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+    ExceptionMessage body = new ExceptionMessage();
+    RentalExceptionMessage exceptionMessage = e.getExceptionMessage();
+    String message = exceptionMessage.getMessage();
 
-    if (RentalExceptionMessage.RENTAL_NOT_FOUND.equals(e.getExceptionMessage())) {
+    if (RentalExceptionMessage.RENTAL_NOT_FOUND.equals(exceptionMessage)) {
       httpStatus = HttpStatus.NOT_FOUND;
-      message.addError("rentalId", e.getExceptionMessage().getMessage());
+      body.addError("rentalId", message);
+    } else if (RentalExceptionMessage.CLIENT_STATUS_IS_NOT_ACTIVE.equals(exceptionMessage)) {
+      body.addError("clientId", message);
+    } else if (RentalExceptionMessage.EMPLOYEE_STATUS_IS_NOT_EMPLOYED.equals(exceptionMessage)) {
+      body.addError("employeeId", message);
+    } else if (RentalExceptionMessage.CAR_STATUS_IS_NOT_AVAILABLE.equals(exceptionMessage)) {
+      body.addError("carsIdList", message);
     } else {
-      message.addError(null, e.getExceptionMessage().getMessage());
+      httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+      body.addError(null, message);
     }
 
-    return ResponseEntity.status(httpStatus).body(message);
+    return ResponseEntity.status(httpStatus).body(body);
   }
 }

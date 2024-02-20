@@ -11,16 +11,23 @@ public class ClientExceptionHandler {
 
   @ExceptionHandler(ClientException.class)
   public ResponseEntity<ExceptionMessage> clientExceptionHandler(ClientException e) {
-    HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-    ExceptionMessage message = new ExceptionMessage();
+    ExceptionMessage body = new ExceptionMessage();
+    HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+    ClientExceptionMessage exceptionMessage = e.getExceptionMessage();
+    String message = e.getExceptionMessage().getMessage();
 
-    if (ClientExceptionMessage.CLIENT_NOT_FOUND.equals(e.getExceptionMessage())) {
+    if (ClientExceptionMessage.CLIENT_NOT_FOUND.equals(exceptionMessage)) {
       httpStatus = HttpStatus.NOT_FOUND;
-      message.addError("clientId", e.getExceptionMessage().getMessage());
+      body.addError("clientId", message);
+    } else if (ClientExceptionMessage.EMAIL_IS_NOT_UNIQUE.equals(exceptionMessage)) {
+      body.addError("email", message);
+    } else if (ClientExceptionMessage.TEL_IS_NOT_UNIQUE.equals(exceptionMessage)) {
+      body.addError("tel", message);
     } else {
-      message.addError(null, e.getExceptionMessage().getMessage());
+      httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+      body.addError(null, message);
     }
 
-    return ResponseEntity.status(httpStatus).body(message);
+    return ResponseEntity.status(httpStatus).body(body);
   }
 }

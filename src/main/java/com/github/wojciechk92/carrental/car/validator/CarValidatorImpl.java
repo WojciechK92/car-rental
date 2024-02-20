@@ -11,6 +11,6 @@ public class CarValidatorImpl implements CarValidator {
 
   @Override
   public void validateCarYear(int year) {
-    if (year > LocalDateTime.now().getYear()) throw new CarException(CarExceptionMessage.CAR_PRODUCTION_DATE_IS_INVALID);
+    if (year > LocalDateTime.now().getYear()) throw new CarException(CarExceptionMessage.CAR_PRODUCTION_DATE_IS_INCORRECT);
   }
 }

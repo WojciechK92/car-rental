@@ -41,7 +41,7 @@ class CarServiceImpl implements CarService {
     List<CarReadModel> result = carRepository.findAllByIdIsIn(list).stream()
             .map(CarReadModel::new)
             .toList();
-    if (list.size() != result.size()) throw new CarException(CarExceptionMessage.LIST_CONTAINS_UNAVAILABLE_CAR);
+    if (list.size() != result.size()) throw new CarException(CarExceptionMessage.LIST_CONTAINS_WRONG_CAR_ID);
     return result;
   }
 
