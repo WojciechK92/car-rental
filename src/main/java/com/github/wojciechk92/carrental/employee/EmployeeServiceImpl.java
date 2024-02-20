@@ -1,5 +1,7 @@
 package com.github.wojciechk92.carrental.employee;
 
+import com.github.wojciechk92.carrental.common.personalDetails.PersonalDetails;
+import com.github.wojciechk92.carrental.common.personalDetails.PersonalDetailsSetter;
 import com.github.wojciechk92.carrental.common.personalDetails.PersonalDetailsValidator;
 import com.github.wojciechk92.carrental.employee.dto.EmployeeReadModel;
 import com.github.wojciechk92.carrental.employee.dto.EmployeeWriteModel;
@@ -16,11 +18,13 @@ import java.util.List;
 class EmployeeServiceImpl implements EmployeeService {
   private final EmployeeRepository employeeRepository;
   private final PersonalDetailsValidator validator;
+  private final PersonalDetailsSetter personalDetailsSetter;
 
   @Autowired
-  EmployeeServiceImpl(EmployeeRepository employeeRepository, PersonalDetailsValidator validator) {
+  EmployeeServiceImpl(EmployeeRepository employeeRepository, PersonalDetailsValidator validator, PersonalDetailsSetter personalDetailsSetter) {
     this.employeeRepository = employeeRepository;
     this.validator = validator;
+    this.personalDetailsSetter = personalDetailsSetter;
   }
 
   @Override
@@ -50,10 +54,8 @@ class EmployeeServiceImpl implements EmployeeService {
     employeeRepository.findById(id)
             .map(employee -> {
               validator.validateOnUpdateForEmployee(employee, toUpdate);
-              employee.getPersonalDetails().setFirstName(toUpdate.getFirstName());
-              employee.getPersonalDetails().setLastName(toUpdate.getLastName());
-              employee.getPersonalDetails().setEmail(toUpdate.getEmail());
-              employee.getPersonalDetails().setTel(toUpdate.getTel());
+              PersonalDetails personalDetails = personalDetailsSetter.setPersonalDetailsForEmployee(employee, toUpdate);
+              employee.setPersonalDetails(personalDetails);
               employee.setStatus(toUpdate.getStatus());
               return employee;
             })
@@ -63,7 +65,6 @@ class EmployeeServiceImpl implements EmployeeService {
   @Transactional
   @Override
   public void setStatusTo(EmployeeStatus status, Long id) {
-
     employeeRepository.findById(id)
             .map(employee -> {
               employee.setStatus(status);

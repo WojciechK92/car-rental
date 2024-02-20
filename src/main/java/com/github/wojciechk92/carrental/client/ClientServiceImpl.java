@@ -4,6 +4,8 @@ import com.github.wojciechk92.carrental.client.dto.ClientReadModel;
 import com.github.wojciechk92.carrental.client.dto.ClientWriteModel;
 import com.github.wojciechk92.carrental.client.exception.ClientException;
 import com.github.wojciechk92.carrental.client.exception.ClientExceptionMessage;
+import com.github.wojciechk92.carrental.common.personalDetails.PersonalDetails;
+import com.github.wojciechk92.carrental.common.personalDetails.PersonalDetailsSetter;
 import com.github.wojciechk92.carrental.common.personalDetails.PersonalDetailsValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +17,14 @@ import java.util.List;
 @Service
 class ClientServiceImpl implements ClientService {
   private final ClientRepository clientRepository;
-  private final PersonalDetailsValidator validator;
+  private final PersonalDetailsValidator personalDetailsValidator;
+  private final PersonalDetailsSetter personalDetailsSetter;
 
   @Autowired
-  ClientServiceImpl(ClientRepository clientRepository, PersonalDetailsValidator validator) {
+  ClientServiceImpl(ClientRepository clientRepository, PersonalDetailsValidator personalDetailsValidator, PersonalDetailsSetter personalDetailsSetter) {
     this.clientRepository = clientRepository;
-    this.validator = validator;
+    this.personalDetailsValidator = personalDetailsValidator;
+    this.personalDetailsSetter = personalDetailsSetter;
   }
 
   @Override
@@ -39,7 +43,7 @@ class ClientServiceImpl implements ClientService {
 
   @Override
   public ClientReadModel createClient(ClientWriteModel toSave) {
-    validator.validateOnSaveForClient(toSave);
+    personalDetailsValidator.validateOnSaveForClient(toSave);
 
     Client result = clientRepository.save(toSave.toClient());
     return new ClientReadModel(result);
@@ -51,11 +55,9 @@ class ClientServiceImpl implements ClientService {
 
     clientRepository.findById(id)
             .map(client -> {
-              validator.validateOnUpdateForClient(client, toUpdate);
-              client.getPersonalDetails().setFirstName(toUpdate.getFirstName());
-              client.getPersonalDetails().setLastName(toUpdate.getLastName());
-              client.getPersonalDetails().setEmail(toUpdate.getEmail());
-              client.getPersonalDetails().setTel(toUpdate.getTel());
+              personalDetailsValidator.validateOnUpdateForClient(client, toUpdate);
+              PersonalDetails personalDetails = personalDetailsSetter.setPersonalDetailsForClient(client, toUpdate);
+              client.setPersonalDetails(personalDetails);
               client.setStatus(toUpdate.getStatus());
               return client;
             })
