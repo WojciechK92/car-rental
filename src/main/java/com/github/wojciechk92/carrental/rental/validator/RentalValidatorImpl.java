@@ -40,7 +40,7 @@ class RentalValidatorImpl implements RentalValidator {
 
   @Override
   public RentalStatus checkIfStatusIsCompleted(Rental previousRental, RentalWriteModel nextRental) {
-    if (previousRental != null && RentalStatus.COMPLETED.equals(previousRental.getStatus())) throw new RentalException(RentalExceptionMessage.RENTAL_STATUS_IS_ALREADY_COMPLETED);
+    if (RentalStatus.COMPLETED.equals(previousRental.getStatus())) throw new RentalException(RentalExceptionMessage.RENTAL_STATUS_IS_ALREADY_COMPLETED);
     return nextRental.getStatus();
   }
 

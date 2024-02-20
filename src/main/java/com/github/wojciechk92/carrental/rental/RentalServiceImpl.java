@@ -48,7 +48,7 @@ class RentalServiceImpl implements RentalService {
 
   @Override
   public RentalReadModel createRental(RentalWriteModel toSave) {
-    Rental rental = validateRentalWriteModel(null, toSave);
+    Rental rental = validateRentalOnSave(toSave);
     Rental result = rentalRepository.save(rental);
 
     List<Long> list = result.getCars().stream()
@@ -66,7 +66,7 @@ class RentalServiceImpl implements RentalService {
             .map(rentalFromDb -> {
               List<Long> previousCars = rentalFromDb.getCars().stream().map(Car::getId).toList();
               List<Long> nextCars = toUpdate.getCarsIdList();
-              Rental rental = validateRentalWriteModel(rentalFromDb, toUpdate);
+              Rental rental = validateRentalOnUpdate(rentalFromDb, toUpdate);
               updateStatusForCarsFromList(previousCars, nextCars);
               return rental;
             })
@@ -101,24 +101,30 @@ class RentalServiceImpl implements RentalService {
             .orElseThrow(() -> new RentalException(RentalExceptionMessage.RENTAL_NOT_FOUND));
   }
 
-  private Rental validateRentalWriteModel(Rental previousRental, RentalWriteModel nextRental) {
+  private Rental validateRentalOnSave(RentalWriteModel rental) {
+    int rentalFor = rental.getRentalFor();
+    RentalStatus status = rental.getStatus();
+    Employee employee = validator.checkEmployeeById(rental.getEmployeeId());
+    Client client = validator.checkClientById(rental.getClientId());
+    Set<Car> cars = validator.checkCarsByIdList(null, rental);
+
+    return new Rental(rentalFor, status, client, employee, cars);
+  }
+
+  private Rental validateRentalOnUpdate(Rental previousRental, RentalWriteModel nextRental) {
     int rentalFor = nextRental.getRentalFor();
     RentalStatus status = validator.checkIfStatusIsCompleted(previousRental, nextRental);
     Employee employee = validator.checkEmployeeById(nextRental.getEmployeeId());
     Client client = validator.checkClientById(nextRental.getClientId());
     Set<Car> cars = validator.checkCarsByIdList(previousRental, nextRental);
 
-    if (previousRental != null) {
-      previousRental.setRentalFor(rentalFor);
-      previousRental.setStatus(status);
-      previousRental.setEmployee(employee);
-      previousRental.setClient(client);
-      previousRental.setCars(cars);
+    previousRental.setRentalFor(rentalFor);
+    previousRental.setStatus(status);
+    previousRental.setEmployee(employee);
+    previousRental.setClient(client);
+    previousRental.setCars(cars);
 
-      return previousRental;
-    }
-
-    return new Rental(rentalFor, status, client, employee, cars);
+    return previousRental;
   }
 
   private void updateStatusForCarsFromList(List<Long> previousCars, List<Long> nextCars) {
