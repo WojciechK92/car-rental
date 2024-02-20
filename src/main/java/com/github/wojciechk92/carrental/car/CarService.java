@@ -20,4 +20,6 @@ public interface CarService {
 
   void setStatusTo(CarStatus status, Long id);
 
+  void setStatusForCarsFromIdList(List<Long> list, CarStatus status);
+
 }

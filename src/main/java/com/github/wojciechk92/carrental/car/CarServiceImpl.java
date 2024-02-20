@@ -87,4 +87,11 @@ class CarServiceImpl implements CarService {
             })
             .orElseThrow(() -> new CarException(CarExceptionMessage.CAR_NOT_FOUND));
   }
+
+  @Transactional
+  @Override
+  public void setStatusForCarsFromIdList(List<Long> list, CarStatus status) {
+    List<Car> cars = carRepository.findAllByIdIsIn(list);
+    cars.forEach(car -> car.setStatus(status));
+  }
 }

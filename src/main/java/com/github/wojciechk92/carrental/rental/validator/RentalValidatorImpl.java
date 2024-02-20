@@ -20,6 +20,7 @@ import com.github.wojciechk92.carrental.rental.exception.RentalExceptionMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,17 +39,13 @@ class RentalValidatorImpl implements RentalValidator {
   }
 
   @Override
-  public Rental validateRentalWriteModel(RentalWriteModel rental) {
-    int rentalFor = rental.getRentalFor();
-    RentalStatus status = rental.getStatus();
-    Employee employee = checkEmployeeById(rental.getEmployeeId());
-    Client client = checkClientById(rental.getClientId());
-    Set<Car> cars = checkCarsByIdList(rental.getCarsIdList());
-
-    return new Rental(rentalFor, status, client, employee, cars);
+  public RentalStatus checkIfStatusIsCompleted(Rental previousRental, RentalWriteModel nextRental) {
+    if (previousRental != null && RentalStatus.COMPLETED.equals(previousRental.getStatus())) throw new RentalException(RentalExceptionMessage.RENTAL_STATUS_IS_ALREADY_COMPLETED);
+    return nextRental.getStatus();
   }
 
-  private Employee checkEmployeeById(Long id) {
+  @Override
+  public Employee checkEmployeeById(Long id) {
     EmployeeReadModel result = employeeService.getEmployee(id);
     if (EmployeeStatus.EMPLOYED != result.getStatus()) {
       throw new RentalException(RentalExceptionMessage.EMPLOYEE_STATUS_IS_NOT_EMPLOYED);
@@ -56,7 +53,8 @@ class RentalValidatorImpl implements RentalValidator {
     return new Employee(result);
   }
 
-  private Client checkClientById(Long id) {
+  @Override
+  public Client checkClientById(Long id) {
     ClientReadModel result = clientService.getClient(id);
     if (ClientStatus.ACTIVE != result.getStatus()) {
       throw new RentalException(RentalExceptionMessage.CLIENT_STATUS_IS_NOT_ACTIVE);
@@ -64,14 +62,26 @@ class RentalValidatorImpl implements RentalValidator {
     return new Client(result);
   }
 
-  private Set<Car> checkCarsByIdList(List<Long> list) {
-    List<CarReadModel> result = carService.getCarsByIdList(list);
+  @Override
+  public Set<Car> checkCarsByIdList(Rental previousRental, RentalWriteModel nextRental) {
+    List<CarReadModel> nextCars = carService.getCarsByIdList(nextRental.getCarsIdList());
 
-    boolean statusIsNotAvailable = result.stream().anyMatch(car -> CarStatus.AVAILABLE != car.getStatus());
-    if (statusIsNotAvailable) throw new RentalException(RentalExceptionMessage.CAR_STATUS_IS_NOT_AVAILABLE);
+    if (nextCars.isEmpty()) throw new RentalException(RentalExceptionMessage.CAR_LIST_IS_EMPTY);
+    checkIfCarsAreAvailable(previousRental, nextCars);
 
-    return result.stream()
+    return nextCars.stream()
             .map(Car::new)
             .collect(Collectors.toSet());
+  }
+
+  public void checkIfCarsAreAvailable(Rental previousRental, List<CarReadModel> nextCars) {
+    List<Long> previousCars = previousRental == null
+            ? Collections.emptyList()
+            : previousRental.getCars().stream().map(Car::getId).toList();
+
+    boolean statusIsNotAvailable = nextCars.stream()
+              .anyMatch(car -> CarStatus.AVAILABLE != car.getStatus() && !previousCars.contains(car.getId()));
+
+    if (statusIsNotAvailable) throw new RentalException(RentalExceptionMessage.CAR_STATUS_IS_NOT_AVAILABLE);
   }
 }

@@ -46,4 +46,10 @@ public class RentalController {
     rentalService.setStatusTo(status, id);
     return ResponseEntity.noContent().build();
   }
+
+  @PatchMapping("/{id}/close")
+  public ResponseEntity<Void> closeRental(@PathVariable Long id) {
+    rentalService.closeRental(id);
+    return ResponseEntity.noContent().build();
+  }
 }

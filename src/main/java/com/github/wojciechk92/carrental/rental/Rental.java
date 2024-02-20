@@ -62,6 +62,10 @@ public class Rental {
     return returnDate;
   }
 
+  void setRentalDate(LocalDateTime rentalDate) {
+    this.rentalDate = rentalDate;
+  }
+
   void setReturnDate(LocalDateTime returnDate) {
     this.returnDate = returnDate;
   }
@@ -70,7 +74,7 @@ public class Rental {
     return rentalFor;
   }
 
-  void setRentalFor(int rentalFor) {
+  public void setRentalFor(int rentalFor) {
     this.rentalFor = rentalFor;
   }
 
@@ -78,7 +82,7 @@ public class Rental {
     return status;
   }
 
-  void setStatus(RentalStatus status) {
+  public void setStatus(RentalStatus status) {
     this.status = status;
   }
 
@@ -86,7 +90,7 @@ public class Rental {
     return client;
   }
 
-  void setClient(Client client) {
+  public void setClient(Client client) {
     this.client = client;
   }
 
@@ -94,7 +98,7 @@ public class Rental {
     return employee;
   }
 
-  void setEmployee(Employee employee) {
+  public void setEmployee(Employee employee) {
     this.employee = employee;
   }
 
@@ -102,7 +106,7 @@ public class Rental {
     return cars;
   }
 
-  void setCars(Set<Car> cars) {
+  public void setCars(Set<Car> cars) {
     this.cars = cars;
   }
 

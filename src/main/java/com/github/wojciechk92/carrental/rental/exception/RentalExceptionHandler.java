@@ -25,6 +25,11 @@ public class RentalExceptionHandler {
       body.addError("employeeId", message);
     } else if (RentalExceptionMessage.CAR_STATUS_IS_NOT_AVAILABLE.equals(exceptionMessage)) {
       body.addError("carsIdList", message);
+    } else if (RentalExceptionMessage.CAR_LIST_IS_EMPTY.equals(exceptionMessage)) {
+      body.addError("carsIdList", message);
+    } else if (RentalExceptionMessage.RENTAL_STATUS_IS_ALREADY_COMPLETED.equals(exceptionMessage)) {
+      httpStatus = HttpStatus.CONFLICT;
+      body.addError(null, message);
     } else {
       httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
       body.addError(null, message);
