@@ -30,6 +30,9 @@ public class RentalExceptionHandler {
     } else if (RentalExceptionMessage.RENTAL_STATUS_IS_ALREADY_COMPLETED.equals(exceptionMessage)) {
       httpStatus = HttpStatus.CONFLICT;
       body.addError(null, message);
+    } else if (RentalExceptionMessage.RENTAL_STATUS_IS_ALREADY_CANCELED.equals(exceptionMessage)) {
+      httpStatus = HttpStatus.CONFLICT;
+      body.addError(null, message);
     } else {
       httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
       body.addError(null, message);

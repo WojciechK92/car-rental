@@ -91,9 +91,22 @@ class RentalServiceImpl implements RentalService {
   public void closeRental(Long id) {
     rentalRepository.findById(id)
             .map(rental -> {
-              if (RentalStatus.COMPLETED.equals(rental.getStatus())) throw new RentalException(RentalExceptionMessage.RENTAL_STATUS_IS_ALREADY_COMPLETED);
+              validator.checkIfStatusIsCompletedOrCanceled(rental, null);
               rental.setStatus(RentalStatus.COMPLETED);
               rental.setReturnDate(LocalDateTime.now());
+              List<Long> cars = rental.getCars().stream().map(Car::getId).toList();
+              carService.setStatusForCarsFromIdList(cars, CarStatus.AVAILABLE);
+              return rental;
+            })
+            .orElseThrow(() -> new RentalException(RentalExceptionMessage.RENTAL_NOT_FOUND));
+  }
+
+  @Override
+  public void cancelRental(Long id) {
+    rentalRepository.findById(id)
+            .map(rental -> {
+              validator.checkIfStatusIsCompletedOrCanceled(rental, null);
+              rental.setStatus(RentalStatus.CANCELLED);
               List<Long> cars = rental.getCars().stream().map(Car::getId).toList();
               carService.setStatusForCarsFromIdList(cars, CarStatus.AVAILABLE);
               return rental;
@@ -113,7 +126,7 @@ class RentalServiceImpl implements RentalService {
 
   private Rental validateRentalOnUpdate(Rental previousRental, RentalWriteModel nextRental) {
     int rentalFor = nextRental.getRentalFor();
-    RentalStatus status = validator.checkIfStatusIsCompleted(previousRental, nextRental);
+    RentalStatus status = validator.checkIfStatusIsCompletedOrCanceled(previousRental, nextRental);
     Employee employee = validator.checkEmployeeById(nextRental.getEmployeeId());
     Client client = validator.checkClientById(nextRental.getClientId());
     Set<Car> cars = validator.checkCarsByIdList(previousRental, nextRental);

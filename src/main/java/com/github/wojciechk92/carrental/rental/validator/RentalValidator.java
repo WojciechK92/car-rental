@@ -13,7 +13,7 @@ import java.util.Set;
 
 public interface RentalValidator {
 
-  RentalStatus checkIfStatusIsCompleted(Rental previousRental, RentalWriteModel nextRental);
+  RentalStatus checkIfStatusIsCompletedOrCanceled(Rental previousRental, RentalWriteModel nextRental);
 
   void checkIfCarsAreAvailable(Rental previousRental, List<CarReadModel> nextCars);
 

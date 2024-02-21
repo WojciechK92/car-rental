@@ -6,7 +6,8 @@ public enum RentalExceptionMessage {
   CLIENT_STATUS_IS_NOT_ACTIVE("Client status is not active!"),
   CAR_LIST_IS_EMPTY("Car list is empty!"),
   CAR_STATUS_IS_NOT_AVAILABLE("Car status is not available!"),
-  RENTAL_STATUS_IS_ALREADY_COMPLETED("Rental status is already completed!");
+  RENTAL_STATUS_IS_ALREADY_COMPLETED("Rental status is already completed!"),
+  RENTAL_STATUS_IS_ALREADY_CANCELED("Rental status is already canceled!");
 
   private final String message;
 

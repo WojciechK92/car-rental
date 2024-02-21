@@ -52,4 +52,10 @@ public class RentalController {
     rentalService.closeRental(id);
     return ResponseEntity.noContent().build();
   }
+
+  @PatchMapping("/{id}/cancel")
+  public ResponseEntity<Void> cancelRental(@PathVariable Long id) {
+    rentalService.cancelRental(id);
+    return ResponseEntity.noContent().build();
+  }
 }
