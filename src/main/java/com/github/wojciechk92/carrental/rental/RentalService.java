@@ -16,8 +16,6 @@ interface RentalService {
 
   void updateRental(RentalWriteModel rental, Long id);
 
-  void setStatusTo(RentalStatus status, Long id);
-
   void closeRental(Long id);
 
   void cancelRental(Long id);

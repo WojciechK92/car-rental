@@ -73,20 +73,6 @@ class RentalServiceImpl implements RentalService {
             .orElseThrow(() -> new RentalException(RentalExceptionMessage.RENTAL_NOT_FOUND));
   }
 
-  @Transactional
-  @Override
-  public void setStatusTo(RentalStatus status, Long id) {
-    rentalRepository.findById(id)
-            .map(rental -> {
-              if (RentalStatus.COMPLETED.equals(status)) {
-                rental.setReturnDate(LocalDateTime.now());
-              }
-              rental.setStatus(status);
-              return rental;
-            })
-            .orElseThrow(() -> new RentalException(RentalExceptionMessage.RENTAL_NOT_FOUND));
-  }
-
   @Override
   public void closeRental(Long id) {
     rentalRepository.findById(id)

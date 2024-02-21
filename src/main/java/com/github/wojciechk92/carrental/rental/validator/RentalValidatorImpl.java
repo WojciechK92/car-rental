@@ -43,7 +43,8 @@ class RentalValidatorImpl implements RentalValidator {
     if (RentalStatus.COMPLETED.equals(previousRental.getStatus())) throw new RentalException(RentalExceptionMessage.RENTAL_STATUS_IS_ALREADY_COMPLETED);
     if (RentalStatus.CANCELLED.equals(previousRental.getStatus())) throw new RentalException(RentalExceptionMessage.RENTAL_STATUS_IS_ALREADY_CANCELED);
 
-    return nextRental.getStatus();
+    if (nextRental != null) return nextRental.getStatus();
+    return null;
   }
 
   @Override
