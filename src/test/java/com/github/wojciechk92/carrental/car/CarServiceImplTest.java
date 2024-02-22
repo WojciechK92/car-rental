@@ -98,6 +98,7 @@ class CarServiceImplTest {
   }
 
   @Test
+  @DisplayName("Should update car when production year and car id are correct.")
   void updateCar_correctProductionYear_correctCarId() {
     // given
     CarWriteModel carToUpdate = generateCarWriteModel("audi", "a6", 2022, 919.99, CarStatus.INACTIVE);
@@ -122,6 +123,47 @@ class CarServiceImplTest {
             .hasFieldOrPropertyWithValue("status", carToUpdate.getStatus());
   }
 
+  @Test
+  @DisplayName("Should throw CarException when carId is wrong.")
+  void setStatusTo_wrongCarId_throwCarException() {
+    // given
+    CarWriteModel carToUpdate = generateCarWriteModel("audi", "a6", 2022, 919.99, CarStatus.INACTIVE);
+    CarRepository mockCarRepository = mock(CarRepository.class);
+    when(mockCarRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+    // system under test
+    CarServiceImpl toTest = new CarServiceImpl(mockCarRepository, null);
+
+    //when
+    Throwable exception = catchThrowable(() -> toTest.setStatusTo(CarStatus.AVAILABLE, 1L));
+
+    // then
+    assertThat(((CarException) exception).getExceptionMessage())
+            .isEqualTo(CarExceptionMessage.CAR_NOT_FOUND);
+  }
+
+  @Test
+  @DisplayName("Should update car status when production year and car id are correct.")
+  void setStatusTo_correctProductionYear_correctCarId() {
+    // given
+    Car carFromDb = generateCar("ford", "fiesta", 2013, 79.98, CarStatus.RENTAL);
+    CarStatus status = CarStatus.AVAILABLE;
+
+    CarValidatorImpl carValidator = new CarValidatorImpl();
+    CarRepository mockCarRepository = mock(CarRepository.class);
+    when(mockCarRepository.findById(anyLong())).thenReturn(Optional.of(carFromDb));
+
+    // system under test
+    CarServiceImpl toTest = new CarServiceImpl(mockCarRepository, carValidator);
+
+    //when
+    toTest.setStatusTo(status, 1L);
+
+    // then
+    assertThat(carFromDb)
+            .hasFieldOrPropertyWithValue("status", status);
+  }
+
   private CarWriteModel generateCarWriteModel(String make, String model, int productionYear, double pricePerDay, CarStatus status) {
     CarWriteModel car = new CarWriteModel();
     car.setMake(make);
@@ -131,5 +173,9 @@ class CarServiceImplTest {
     car.setStatus(status);
 
     return car;
+  }
+
+  private Car generateCar(String make, String model, int productionYear, double pricePerDay, CarStatus status) {
+    return new Car(make, model, productionYear, pricePerDay, status);
   }
 }
