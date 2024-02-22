@@ -15,6 +15,8 @@ public class CarReadModel {
   private double pricePerDay;
   private List<Long> rentalIdList;
 
+  public CarReadModel() {}
+
   public CarReadModel(Car car) {
     this.id = car.getId();
     this.make = car.getMake();
