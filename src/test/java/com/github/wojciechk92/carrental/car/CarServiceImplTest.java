@@ -22,7 +22,7 @@ class CarServiceImplTest {
   @DisplayName("Should throw CarException when production year is wrong.")
   void createCar_wrongProductionYear_throwCarException() {
     // given
-    CarWriteModel carToSave = generateCarWriteModel("audi", "a6", 2025, 919.99, CarStatus.INACTIVE);
+    CarWriteModel carToSave = generateCarWriteModel(false);
     CarValidatorImpl carValidator = new CarValidatorImpl();
 
     // system under test
@@ -40,7 +40,7 @@ class CarServiceImplTest {
   @DisplayName("Should return CarReadModel when production year is correct.")
   void createCar_correctProductionYear_return_CarReadModel() {
     // given
-    CarWriteModel carToSave = generateCarWriteModel("bmw", "e60", 2004, 19.99, CarStatus.AVAILABLE);
+    CarWriteModel carToSave = generateCarWriteModel(true);
     Car carToReturn = carToSave.toCar();
     carToReturn.setId(1L);
 
@@ -57,14 +57,14 @@ class CarServiceImplTest {
     // then
     verify(mockCarRepository, times(1)).save(any(Car.class));
     assertThat(car)
-            .hasFieldOrPropertyWithValue("make", "bmw");
+            .hasFieldOrPropertyWithValue("make", carToSave.getMake());
   }
 
   @Test
   @DisplayName("Should throw CarException when production year is wrong.")
   void updateCar_wrongProductionYear_throwCarException() {
     // given
-    CarWriteModel carToUpdate = generateCarWriteModel("audi", "a6", 2025, 919.99, CarStatus.INACTIVE);
+    CarWriteModel carToUpdate = generateCarWriteModel(false);
     CarValidatorImpl carValidator = new CarValidatorImpl();
 
     // system under test
@@ -79,10 +79,10 @@ class CarServiceImplTest {
   }
 
   @Test
-  @DisplayName("Should throw CarException when production year is wrong.")
+  @DisplayName("Should throw CarException when production year is correct but car id is wrong.")
   void updateCar_correctProductionYear_wrongCarId_throwCarException() {
     // given
-    CarWriteModel carToUpdate = generateCarWriteModel("audi", "a6", 2022, 919.99, CarStatus.INACTIVE);
+    CarWriteModel carToUpdate = generateCarWriteModel(true);
     CarValidatorImpl carValidator = new CarValidatorImpl();
     CarRepository mockCarRepository = mock(CarRepository.class);
     when(mockCarRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -102,8 +102,8 @@ class CarServiceImplTest {
   @DisplayName("Should update car when production year and car id are correct.")
   void updateCar_correctProductionYear_correctCarId() {
     // given
-    CarWriteModel carToUpdate = generateCarWriteModel("audi", "a6", 2022, 919.99, CarStatus.INACTIVE);
-    Car carFromDb = new Car("ford", "fiesta", 2013, 79.98, CarStatus.RENTAL);
+    CarWriteModel carToUpdate = generateCarWriteModel(true);
+    Car carFromDb = generateCar(true);
 
     CarValidatorImpl carValidator = new CarValidatorImpl();
     CarRepository mockCarRepository = mock(CarRepository.class);
@@ -128,7 +128,7 @@ class CarServiceImplTest {
   @DisplayName("Should throw CarException when carId is wrong.")
   void setStatusTo_wrongCarId_throwCarException() {
     // given
-    CarWriteModel carToUpdate = generateCarWriteModel("audi", "a6", 2022, 919.99, CarStatus.INACTIVE);
+    CarWriteModel carToUpdate = generateCarWriteModel(true);
     CarRepository mockCarRepository = mock(CarRepository.class);
     when(mockCarRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -147,7 +147,7 @@ class CarServiceImplTest {
   @DisplayName("Should update car status when production year and car id are correct.")
   void setStatusTo_correctProductionYear_correctCarId() {
     // given
-    Car carFromDb = generateCar("ford", "fiesta", 2013, 79.98, CarStatus.RENTAL);
+    Car carFromDb = generateCar(true);
     CarStatus status = CarStatus.AVAILABLE;
 
     CarValidatorImpl carValidator = new CarValidatorImpl();
@@ -170,8 +170,8 @@ class CarServiceImplTest {
   void setStatusForCarsFromIdList() {
     // given
     CarStatus status = CarStatus.IN_SERVICE;
-    Car car1 = generateCar("audi", "a6", 2025, 919.99, CarStatus.INACTIVE);
-    Car car2 = generateCar("ford", "fiesta", 2013, 79.98, CarStatus.RENTAL);
+    Car car1 = generateCar(true);
+    Car car2 = generateCar(false);
     List<Long> idList = List.of(1L, 2L);
     List<Car> carList = List.of(car1, car2);
 
@@ -190,18 +190,18 @@ class CarServiceImplTest {
             .allMatch(status::equals);
   }
 
-  private CarWriteModel generateCarWriteModel(String make, String model, int productionYear, double pricePerDay, CarStatus status) {
+  private CarWriteModel generateCarWriteModel(boolean yearIsCorrect) {
     CarWriteModel car = new CarWriteModel();
-    car.setMake(make);
-    car.setModel(model);
-    car.setProductionYear(productionYear);
-    car.setPricePerDay(pricePerDay);
-    car.setStatus(status);
+    car.setMake("bmw");
+    car.setModel("e60");
+    car.setProductionYear(yearIsCorrect ? 2004 : 2035);
+    car.setPricePerDay(199.89);
+    car.setStatus(CarStatus.AVAILABLE);
 
     return car;
   }
 
-  private Car generateCar(String make, String model, int productionYear, double pricePerDay, CarStatus status) {
-    return new Car(make, model, productionYear, pricePerDay, status);
+  private Car generateCar(boolean yearIsCorrect) {
+    return new Car("audi", "a6", yearIsCorrect ? 2022 : 2035, 919.99, CarStatus.INACTIVE);
   }
 }
