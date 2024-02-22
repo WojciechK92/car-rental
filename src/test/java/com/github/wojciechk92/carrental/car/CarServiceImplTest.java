@@ -8,6 +8,7 @@ import com.github.wojciechk92.carrental.car.validator.CarValidatorImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -162,6 +163,31 @@ class CarServiceImplTest {
     // then
     assertThat(carFromDb)
             .hasFieldOrPropertyWithValue("status", status);
+  }
+
+  @Test
+  @DisplayName("Should update car status for all cars on the list.")
+  void setStatusForCarsFromIdList() {
+    // given
+    CarStatus status = CarStatus.IN_SERVICE;
+    Car car1 = generateCar("audi", "a6", 2025, 919.99, CarStatus.INACTIVE);
+    Car car2 = generateCar("ford", "fiesta", 2013, 79.98, CarStatus.RENTAL);
+    List<Long> idList = List.of(1L, 2L);
+    List<Car> carList = List.of(car1, car2);
+
+    CarRepository mockCarRepository = mock(CarRepository.class);
+    when(mockCarRepository.findAllByIdIsIn(anyList())).thenReturn(carList);
+
+    // system under test
+    CarServiceImpl toTest = new CarServiceImpl(mockCarRepository, null);
+
+    // when
+    toTest.setStatusForCarsFromIdList(idList, status);
+
+    // then
+    assertThat(carList)
+            .extracting(Car::getStatus)
+            .allMatch(status::equals);
   }
 
   private CarWriteModel generateCarWriteModel(String make, String model, int productionYear, double pricePerDay, CarStatus status) {
