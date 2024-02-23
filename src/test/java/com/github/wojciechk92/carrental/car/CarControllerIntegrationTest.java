@@ -134,6 +134,25 @@ class CarControllerIntegrationTest {
             .hasFieldOrPropertyWithValue("status", carToUpdate.getStatus());
   }
 
+  @Test
+  @DisplayName("Http PATCH method to '/cars/{id}' updates status for given car.")
+  void httpPut_setStatusTo_method_updates_status_for_given_car() throws Exception {
+    Car carBefore = createCar(true, false);
+    CarReadModel carFromDb = saveCarToRepository(carBefore);
+
+    mockMvc.perform(MockMvcRequestBuilders
+                    .patch("/cars/" + 1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .param("status", "IN_SERVICE"))
+            .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+    assertThat(carRepository.findById(carFromDb.getId()).get())
+            .isInstanceOf(Car.class)
+            .hasNoNullFieldsOrProperties()
+            .hasFieldOrPropertyWithValue("status", CarStatus.IN_SERVICE);
+  }
+
   private Car createCar(boolean yearIsCorrect, boolean secondVersion) {
     if (secondVersion) return new Car("toyota", "avensis", yearIsCorrect ? 2023 : 2035, 559.79, CarStatus.INACTIVE);
     return new Car("audi", "a8", yearIsCorrect ? 2018 : 2035, 789.79, CarStatus.AVAILABLE);
