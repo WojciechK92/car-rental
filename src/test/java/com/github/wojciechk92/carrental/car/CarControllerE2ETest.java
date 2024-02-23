@@ -1,11 +1,7 @@
 package com.github.wojciechk92.carrental.car;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.wojciechk92.carrental.car.dto.CarReadModel;
 import com.github.wojciechk92.carrental.car.dto.CarWriteModel;
-import com.github.wojciechk92.carrental.car.exception.CarExceptionMessage;
-import com.github.wojciechk92.carrental.common.dto.ExceptionMessage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.net.URI;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,19 +23,21 @@ class CarControllerE2ETest {
 
   @LocalServerPort
   private int port;
-
   @Autowired
   private CarRepository carRepository;
+  @Autowired
+  private CarTestHelper carTestHelper;
+  @Autowired
+  private TestRestTemplate restTemplate;
 
   @Test
   @DisplayName("Http GET request to '/cars/{id}' returns the expected car.")
   void httpGet_to_getCarMethod_returns_given_car() {
     // given
-    Car carBefore = createCar(true, false);
-    CarReadModel carAfter = saveCarToRepository(carBefore);
+    Car carBefore = carTestHelper.createCar(false);
+    CarReadModel carAfter = carTestHelper.saveCarToRepository(carBefore);
 
     // when
-    TestRestTemplate restTemplate = new TestRestTemplate();
     CarReadModel response = restTemplate
             .getForObject("http://localhost:" + port + "/cars/" + carAfter.getId(), CarReadModel.class);
 
@@ -56,16 +53,15 @@ class CarControllerE2ETest {
 
   @Test
   @DisplayName("Http POST request to '/cars' creates and returns new car.")
-  void httpPost_toCreateCarMethod_returns_new_car() {
+  void httpPost_to_createCarMethod_returns_new_car() {
     // given
-    Car carBefore = createCar(true, false);
+    Car carBefore = carTestHelper.createCar(false);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<Car> request = new HttpEntity<>(carBefore, headers);
 
     // when
-    TestRestTemplate restTemplate = new TestRestTemplate();
     CarReadModel response = restTemplate
             .postForObject(URI.create("http://localhost:" + port + "/cars"), request, CarReadModel.class);
 
@@ -89,20 +85,19 @@ class CarControllerE2ETest {
 
   @Test
   @DisplayName("Http PUT request to '/cars/{id}' updates the expected car.")
-  void httpPut_toUpdateCarMethod_updates_given_car() {
+  void httpPut_to_updateCarMethod_updates_given_car() {
     // given
-    Car carBefore = createCar(true, false);
-    CarReadModel carFromDb = saveCarToRepository(carBefore);
+    Car carBefore = carTestHelper.createCar(false);
+    CarReadModel carFromDb = carTestHelper.saveCarToRepository(carBefore);
 
-    Car carAfter = createCar(true, true);
-    CarWriteModel carToUpdate = createCarWriteModel(carAfter);
+    Car carAfter = carTestHelper.createCar(true);
+    CarWriteModel carToUpdate = carTestHelper.createCarWriteModel(carAfter);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<CarWriteModel> request = new HttpEntity<>(carToUpdate, headers);
 
     // when
-    TestRestTemplate restTemplate = new TestRestTemplate();
     restTemplate
             .put(URI.create("http://localhost:" + port + "/cars/" + carFromDb.getId()), request);
 
@@ -114,26 +109,5 @@ class CarControllerE2ETest {
             .hasFieldOrPropertyWithValue("productionYear", carToUpdate.getProductionYear())
             .hasFieldOrPropertyWithValue("pricePerDay", carToUpdate.getPricePerDay())
             .hasFieldOrPropertyWithValue("status", carToUpdate.getStatus());
-  }
-
-  private Car createCar(boolean yearIsCorrect, boolean secondVersion) {
-    if (secondVersion) return new Car("toyota", "avensis", yearIsCorrect ? 2023 : 2035, 559.79, CarStatus.INACTIVE);
-    return new Car("audi", "a8", yearIsCorrect ? 2018 : 2035, 789.79, CarStatus.AVAILABLE);
-  }
-
-  private CarReadModel saveCarToRepository(Car carBefore) {
-    Car carAfter = carRepository.save(carBefore);
-    return new CarReadModel(carAfter);
-  }
-
-  private CarWriteModel createCarWriteModel(Car carBefore){
-    CarWriteModel carAfter = new CarWriteModel();
-    carAfter.setMake(carBefore.getMake());
-    carAfter.setModel(carBefore.getModel());
-    carAfter.setProductionYear(carBefore.getProductionYear());
-    carAfter.setPricePerDay(carBefore.getPricePerDay());
-    carAfter.setStatus(carBefore.getStatus());
-
-    return carAfter;
   }
 }

@@ -1,7 +1,5 @@
 package com.github.wojciechk92.carrental.car;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.wojciechk92.carrental.car.dto.CarReadModel;
 import com.github.wojciechk92.carrental.car.dto.CarWriteModel;
 import com.github.wojciechk92.carrental.car.exception.CarExceptionMessage;
@@ -21,8 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 
@@ -36,9 +32,10 @@ class CarControllerIntegrationTest {
   private MockMvc mockMvc;
   @Autowired
   private EntityManager entityManager;
-
   @Autowired
-  CarRepository carRepository;
+  private CarRepository carRepository;
+  @Autowired
+  private CarTestHelper carTestHelper;
 
   @AfterEach
   void cleanTable() {
@@ -48,11 +45,11 @@ class CarControllerIntegrationTest {
 
   @Test
   @DisplayName("Http GET request to '/cars/{id}' returns the expected car.")
-  void httpGet_toGetCarMethod_returns_given_car() throws Exception {
-    Car carBefore = createCar(true, false);
-    CarReadModel carAfter= saveCarToRepository(carBefore);
+  void httpGet_to_getCarMethod_returns_given_car() throws Exception {
+    Car carBefore = carTestHelper.createCar(false);
+    CarReadModel carAfter= carTestHelper.saveCarToRepository(carBefore);
 
-    String carAfterAsString = mapObjectToString(carAfter);
+    String carAfterAsString = carTestHelper.mapObjectToString(carAfter);
 
     mockMvc.perform(MockMvcRequestBuilders.get("/cars/" + carAfter.getId()))
           .andExpect(MockMvcResultMatchers.status().isOk())
@@ -61,13 +58,13 @@ class CarControllerIntegrationTest {
 
   @Test
   @DisplayName("Http GET request to '/cars/{id}' returns the exception message.")
-  void httpGet_toGetCarMethod_returns_exception_message() throws Exception {
-    Car carBefore = createCar(true, false);
-    CarReadModel carAfter = saveCarToRepository(carBefore);
+  void httpGet_to_getCarMethod_returns_exception_message() throws Exception {
+    Car carBefore = carTestHelper.createCar(false);
+    CarReadModel carAfter = carTestHelper.saveCarToRepository(carBefore);
 
-    ExceptionMessage message = createExceptionMessage("carId", CarExceptionMessage.CAR_NOT_FOUND);
+    ExceptionMessage message = carTestHelper.createExceptionMessage("carId", CarExceptionMessage.CAR_NOT_FOUND);
 
-    String messageAsString = mapObjectToString(message);
+    String messageAsString = carTestHelper.mapObjectToString(message);
 
     mockMvc.perform(MockMvcRequestBuilders.get("/cars/" + carAfter.getId() + 1))
             .andExpect(MockMvcResultMatchers.status().isNotFound())
@@ -76,19 +73,19 @@ class CarControllerIntegrationTest {
 
   @Test
   @DisplayName("Http POST request to '/cars' creates and returns new car.")
-  void httpPost_createCar_method_returns_new_car() throws Exception {
-    Car carBefore = createCar(true, false);
-    CarWriteModel carToSave = createCarWriteModel(carBefore);
+  void httpPost_to_createCarMethod_returns_new_car() throws Exception {
+    Car carBefore = carTestHelper.createCar(false);
+    CarWriteModel carToSave = carTestHelper.createCarWriteModel(carBefore);
 
-    CarReadModel carToReturn = createCarReadModel(carBefore);
+    CarReadModel carToReturn = carTestHelper.createCarReadModel(carBefore);
     carToReturn.setId(1L);
-    String carToReturnAsString = mapObjectToString(carToReturn);
+    String carToReturnAsString = carTestHelper.mapObjectToString(carToReturn);
 
     mockMvc.perform(MockMvcRequestBuilders
                     .post("/cars")
                     .header("Content-Type", "application/json")
                     .header("Accept", "application/json")
-                    .content(mapObjectToString(carToSave)))
+                    .content(carTestHelper.mapObjectToString(carToSave)))
             .andExpect(MockMvcResultMatchers.status().isCreated())
             .andExpect(MockMvcResultMatchers.jsonPath("$.make", Is.is(carToReturn.getMake())))
             .andExpect(MockMvcResultMatchers.jsonPath("$.model", Is.is(carToReturn.getModel())))
@@ -109,13 +106,13 @@ class CarControllerIntegrationTest {
 
   @Test
   @DisplayName("Http PUT method to '/cars/{id}' updates given car.")
-  void httpPut_updateCar_method_updates_given_car() throws Exception {
-    Car carBefore = createCar(true, false);
-    CarReadModel carFromDb = saveCarToRepository(carBefore);
+  void httpPut_to_updateCarMethod_updates_given_car() throws Exception {
+    Car carBefore = carTestHelper.createCar(false);
+    CarReadModel carFromDb = carTestHelper.saveCarToRepository(carBefore);
 
-    Car carAfter = createCar(true, true);
-    CarWriteModel carToUpdate = createCarWriteModel(carAfter);
-    String carToUpdateAsString = mapObjectToString(carToUpdate);
+    Car carAfter = carTestHelper.createCar(true);
+    CarWriteModel carToUpdate = carTestHelper.createCarWriteModel(carAfter);
+    String carToUpdateAsString = carTestHelper.mapObjectToString(carToUpdate);
 
     mockMvc.perform(MockMvcRequestBuilders
               .put("/cars/" + 1)
@@ -136,9 +133,9 @@ class CarControllerIntegrationTest {
 
   @Test
   @DisplayName("Http PATCH method to '/cars/{id}' updates status for given car.")
-  void httpPut_setStatusTo_method_updates_status_for_given_car() throws Exception {
-    Car carBefore = createCar(true, false);
-    CarReadModel carFromDb = saveCarToRepository(carBefore);
+  void httpPut_to_setStatusToMethod_updates_status_for_given_car() throws Exception {
+    Car carBefore = carTestHelper.createCar(false);
+    CarReadModel carFromDb = carTestHelper.saveCarToRepository(carBefore);
 
     mockMvc.perform(MockMvcRequestBuilders
                     .patch("/cars/" + 1)
@@ -151,49 +148,5 @@ class CarControllerIntegrationTest {
             .isInstanceOf(Car.class)
             .hasNoNullFieldsOrProperties()
             .hasFieldOrPropertyWithValue("status", CarStatus.IN_SERVICE);
-  }
-
-  private Car createCar(boolean yearIsCorrect, boolean secondVersion) {
-    if (secondVersion) return new Car("toyota", "avensis", yearIsCorrect ? 2023 : 2035, 559.79, CarStatus.INACTIVE);
-    return new Car("audi", "a8", yearIsCorrect ? 2018 : 2035, 789.79, CarStatus.AVAILABLE);
-  }
-
-  private CarReadModel saveCarToRepository(Car carBefore) {
-    Car carAfter = carRepository.save(carBefore);
-    return new CarReadModel(carAfter);
-  }
-
-  private CarWriteModel createCarWriteModel(Car carBefore){
-    CarWriteModel carAfter = new CarWriteModel();
-    carAfter.setMake(carBefore.getMake());
-    carAfter.setModel(carBefore.getModel());
-    carAfter.setProductionYear(carBefore.getProductionYear());
-    carAfter.setPricePerDay(carBefore.getPricePerDay());
-    carAfter.setStatus(carBefore.getStatus());
-
-    return carAfter;
-  }
-
-  private CarReadModel createCarReadModel(Car carBefore){
-    CarReadModel carAfter = new CarReadModel();
-    carAfter.setMake(carBefore.getMake());
-    carAfter.setModel(carBefore.getModel());
-    carAfter.setProductionYear(carBefore.getProductionYear());
-    carAfter.setPricePerDay(carBefore.getPricePerDay());
-    carAfter.setStatus(carBefore.getStatus());
-    carAfter.setRentalIdList(List.of());
-
-    return carAfter;
-  }
-
-  private String mapObjectToString(Object toMap) throws JsonProcessingException {
-    ObjectMapper mapper = new ObjectMapper();
-    return mapper.writeValueAsString(toMap);
-  }
-
-  private ExceptionMessage createExceptionMessage(String fieldName, CarExceptionMessage exceptionMessage) {
-    ExceptionMessage message = new ExceptionMessage();
-    message.addError(fieldName, exceptionMessage.getMessage());
-    return message;
   }
 }
