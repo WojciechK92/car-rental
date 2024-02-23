@@ -12,8 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.net.URI;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,7 +34,7 @@ class CarControllerE2ETest {
 
   @Test
   @DisplayName("Http GET request to '/cars/{id}' returns the expected car.")
-  void getCar() {
+  void httpGet_to_getCarMethod_returns_gi() {
     // given
     Car carBefore = createCar(true, false);
     CarReadModel carAfter = saveCarToRepository(carBefore);
@@ -48,6 +52,39 @@ class CarControllerE2ETest {
             .hasFieldOrPropertyWithValue("productionYear", carAfter.getProductionYear())
             .hasFieldOrPropertyWithValue("pricePerDay", carAfter.getPricePerDay())
             .hasFieldOrPropertyWithValue("status", carAfter.getStatus());
+  }
+
+  @Test
+  @DisplayName("Http POST request to '/cars' creates and returns new car.")
+  void httpPost_toCreateCarMethod_returns_new_car() throws JsonProcessingException {
+    // given
+    Car carBefore = createCar(true, false);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<Car> request = new HttpEntity<>(carBefore, headers);
+
+    // when
+    TestRestTemplate restTemplate = new TestRestTemplate();
+    CarReadModel response = restTemplate
+            .postForObject(URI.create("http://localhost:" + port + "/cars"), request, CarReadModel.class);
+
+    // then
+    assertThat(response)
+            .isInstanceOf(CarReadModel.class)
+            .hasFieldOrPropertyWithValue("make", carBefore.getMake())
+            .hasFieldOrPropertyWithValue("model", carBefore.getModel())
+            .hasFieldOrPropertyWithValue("productionYear", carBefore.getProductionYear())
+            .hasFieldOrPropertyWithValue("pricePerDay", carBefore.getPricePerDay())
+            .hasFieldOrPropertyWithValue("status", carBefore.getStatus());
+
+    assertThat(carRepository.findById(1L).get())
+            .isInstanceOf(Car.class)
+            .hasFieldOrPropertyWithValue("make", carBefore.getMake())
+            .hasFieldOrPropertyWithValue("model", carBefore.getModel())
+            .hasFieldOrPropertyWithValue("productionYear", carBefore.getProductionYear())
+            .hasFieldOrPropertyWithValue("pricePerDay", carBefore.getPricePerDay())
+            .hasFieldOrPropertyWithValue("status", carBefore.getStatus());
   }
 
   private Car createCar(boolean yearIsCorrect, boolean secondVersion) {
