@@ -34,7 +34,7 @@ class CarControllerE2ETest {
 
   @Test
   @DisplayName("Http GET request to '/cars/{id}' returns the expected car.")
-  void httpGet_to_getCarMethod_returns_gi() {
+  void httpGet_to_getCarMethod_returns_given_car() {
     // given
     Car carBefore = createCar(true, false);
     CarReadModel carAfter = saveCarToRepository(carBefore);
@@ -56,7 +56,7 @@ class CarControllerE2ETest {
 
   @Test
   @DisplayName("Http POST request to '/cars' creates and returns new car.")
-  void httpPost_toCreateCarMethod_returns_new_car() throws JsonProcessingException {
+  void httpPost_toCreateCarMethod_returns_new_car() {
     // given
     Car carBefore = createCar(true, false);
 
@@ -87,6 +87,35 @@ class CarControllerE2ETest {
             .hasFieldOrPropertyWithValue("status", carBefore.getStatus());
   }
 
+  @Test
+  @DisplayName("Http PUT request to '/cars/{id}' updates the expected car.")
+  void httpPut_toUpdateCarMethod_updates_given_car() {
+    // given
+    Car carBefore = createCar(true, false);
+    CarReadModel carFromDb = saveCarToRepository(carBefore);
+
+    Car carAfter = createCar(true, true);
+    CarWriteModel carToUpdate = createCarWriteModel(carAfter);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<CarWriteModel> request = new HttpEntity<>(carToUpdate, headers);
+
+    // when
+    TestRestTemplate restTemplate = new TestRestTemplate();
+    restTemplate
+            .put(URI.create("http://localhost:" + port + "/cars/" + carFromDb.getId()), request);
+
+    // then
+    assertThat(carRepository.findById(carFromDb.getId()).get())
+            .isInstanceOf(Car.class)
+            .hasFieldOrPropertyWithValue("make", carToUpdate.getMake())
+            .hasFieldOrPropertyWithValue("model", carToUpdate.getModel())
+            .hasFieldOrPropertyWithValue("productionYear", carToUpdate.getProductionYear())
+            .hasFieldOrPropertyWithValue("pricePerDay", carToUpdate.getPricePerDay())
+            .hasFieldOrPropertyWithValue("status", carToUpdate.getStatus());
+  }
+
   private Car createCar(boolean yearIsCorrect, boolean secondVersion) {
     if (secondVersion) return new Car("toyota", "avensis", yearIsCorrect ? 2023 : 2035, 559.79, CarStatus.INACTIVE);
     return new Car("audi", "a8", yearIsCorrect ? 2018 : 2035, 789.79, CarStatus.AVAILABLE);
@@ -95,5 +124,16 @@ class CarControllerE2ETest {
   private CarReadModel saveCarToRepository(Car carBefore) {
     Car carAfter = carRepository.save(carBefore);
     return new CarReadModel(carAfter);
+  }
+
+  private CarWriteModel createCarWriteModel(Car carBefore){
+    CarWriteModel carAfter = new CarWriteModel();
+    carAfter.setMake(carBefore.getMake());
+    carAfter.setModel(carBefore.getModel());
+    carAfter.setProductionYear(carBefore.getProductionYear());
+    carAfter.setPricePerDay(carBefore.getPricePerDay());
+    carAfter.setStatus(carBefore.getStatus());
+
+    return carAfter;
   }
 }
