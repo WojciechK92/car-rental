@@ -3,7 +3,13 @@ server:
 spring:
   datasource:
     url: "jdbc:mysql://localhost:3306/car_rental"
-    username: 'root'
-    password: 'password'
+    username: "root"
+    password: "password"
   jpa:
     show-sql: true
+keycloak:
+  auth-server-url: "http://localhost:9000/auth"
+  realm: "CarRental"
+  public-client: true
+  resource: "car-rental-client"
+  principal-attribute: "preferred_username"
