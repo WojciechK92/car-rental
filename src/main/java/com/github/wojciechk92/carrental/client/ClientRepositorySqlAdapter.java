@@ -12,7 +12,7 @@ interface ClientRepositorySqlAdapter extends ClientRepository, JpaRepository<Cli
 
   @NonNull
   @Override
-  @Query("select c from Client c join fetch c.rentals")
+  @Query("select distinct c from Client c left join fetch c.rentals")
   Page<Client> findAll(@NonNull Pageable pageable);
 
   @Override

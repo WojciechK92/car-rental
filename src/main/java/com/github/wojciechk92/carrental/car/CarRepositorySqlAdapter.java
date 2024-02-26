@@ -14,7 +14,7 @@ interface CarRepositorySqlAdapter extends CarRepository, JpaRepository<Car, Long
 
   @NonNull
   @Override
-  @Query("select distinct c from Car c join fetch c.rentals")
+  @Query("select distinct c from Car c left join fetch c.rentals")
   Page<Car> findAll(@NonNull Pageable pageable);
 
 

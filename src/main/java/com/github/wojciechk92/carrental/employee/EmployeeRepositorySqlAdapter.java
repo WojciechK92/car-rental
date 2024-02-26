@@ -12,7 +12,7 @@ public interface EmployeeRepositorySqlAdapter extends EmployeeRepository, JpaRep
 
   @NonNull
   @Override
-  @Query("select e from Employee e join fetch e.rentals")
+  @Query("select distinct e from Employee e left join fetch e.rentals")
   Page<Employee> findAll(@NonNull Pageable pageable);
 
   @Override

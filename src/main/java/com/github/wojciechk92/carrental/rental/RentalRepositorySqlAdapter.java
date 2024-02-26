@@ -12,6 +12,6 @@ interface RentalRepositorySqlAdapter extends RentalRepository, JpaRepository<Ren
 
   @NonNull
   @Override
-  @Query("select r from Rental r join fetch r.cars join fetch r.client join fetch r.employee")
+  @Query("select r from Rental r left join fetch r.cars left join fetch r.client left join fetch r.employee")
   Page<Rental> findAll(@NonNull Pageable pageable);
 }

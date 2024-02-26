@@ -29,10 +29,9 @@ public class SecurityConfig {
     jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeyCloakRoleConverter());
 
     http.authorizeHttpRequests(auth -> auth
-            .requestMatchers("/cars/**").hasRole("USER")
-            .requestMatchers("/clients/**").hasRole("EMPLOYEE")
-            .requestMatchers("/employees/**").hasRole("ADMIN")
-            .requestMatchers("/rentals/**").hasRole("ADMIN")
+            .requestMatchers("/clients/**").authenticated()
+            .requestMatchers("/employees/**").authenticated()
+            .requestMatchers("/rentals/**").authenticated()
             .anyRequest().permitAll())
             .csrf(AbstractHttpConfigurer::disable);
     http.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
